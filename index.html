@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WBFC — Weekly Ballers Football Club</title>
+<meta name="description" content="Weekly Ballers Football Club — the squad, in FIFA card form." />
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-2: #10162a;
+    --panel: #141c33;
+    --line: rgba(255,255,255,0.08);
+    --text: #eef2ff;
+    --muted: #97a0c0;
+    --gold: #f5d15f;
+    --red: #e23b4a;
+    --blue: #2f6df6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: radial-gradient(1200px 600px at 50% -10%, #1b2647 0%, var(--bg) 55%) fixed, var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 54px 20px 30px;
+  }
+  header img.logo {
+    width: 150px; height: 150px;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.9rem);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-top: 18px;
+  }
+  header p.tag {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin-top: 6px;
+  }
+  .divider {
+    height: 3px; width: 90px;
+    margin: 22px auto 0;
+    background: linear-gradient(90deg, var(--red), var(--gold), var(--blue));
+    border-radius: 3px;
+  }
+
+  section { padding: 40px 0; }
+  h2.section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  p.section-sub {
+    color: var(--muted);
+    margin-bottom: 26px;
+  }
+
+  /* Search */
+  .search-wrap { position: relative; max-width: 340px; margin: 0 0 24px; }
+  .search-wrap input {
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.95rem;
+    padding: 11px 14px 11px 38px;
+    outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--gold); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; fill: var(--muted); }
+  .no-results { color: var(--muted); padding: 20px 0; }
+
+  /* Card grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 22px;
+  }
+  .card-btn {
+    background: none; border: 0; padding: 0; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center;
+    transition: transform 0.18s ease, filter 0.18s ease;
+  }
+  .card-btn:hover, .card-btn:focus-visible { transform: translateY(-8px) scale(1.02); outline: none; }
+  .card-btn:focus-visible img { box-shadow: 0 0 0 3px var(--gold); border-radius: 10px; }
+  .card-btn img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 14px 24px rgba(0,0,0,0.45));
+  }
+  .card-btn .name {
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 0.98rem;
+  }
+  .card-btn .meta {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed; inset: 0;
+    background: rgba(4,7,15,0.82);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    z-index: 50;
+  }
+  .modal.open { display: flex; }
+  .modal-inner {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    max-width: 860px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 0;
+  }
+  .modal-inner .card-side {
+    background: linear-gradient(180deg, #1a2340, #0f1526);
+    padding: 26px;
+    display: flex; align-items: center; justify-content: center;
+    border-right: 1px solid var(--line);
+  }
+  .modal-inner .card-side img { width: 100%; height: auto; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5)); }
+  .modal-inner .info-side { padding: 28px; position: relative; }
+  .modal-inner h3 { font-size: 1.6rem; font-weight: 800; }
+  .modal-inner .role { color: var(--gold); font-weight: 600; margin-bottom: 14px; }
+  .modal-inner .blurb { color: var(--muted); margin-bottom: 20px; font-size: 0.96rem; }
+  .modal-inner .about-title {
+    font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold); font-weight: 700; margin-bottom: 6px;
+  }
+  .modal-inner .about {
+    color: var(--text); font-size: 0.95rem; line-height: 1.65;
+    margin-bottom: 20px; padding-left: 12px; border-left: 2px solid var(--line);
+  }
+
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .stat {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .stat .k { color: var(--muted); font-size: 0.72rem; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .stat .k svg { width: 13px; height: 13px; color: var(--gold); }
+  .stat .v { font-size: 1.3rem; font-weight: 800; }
+
+  .kv { font-size: 0.9rem; margin-bottom: 8px; }
+  .kv b { color: var(--gold); }
+
+  .close-btn {
+    position: absolute; top: 14px; right: 16px;
+    background: var(--bg-2); border: 1px solid var(--line); color: var(--text);
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 1.1rem; cursor: pointer; line-height: 1;
+  }
+  .close-btn:hover { background: var(--red); }
+
+  /* Attributes explainer */
+  .explain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .explain {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .explain h4 { font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .explain h4 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); flex: none; }
+  .explain p { color: var(--muted); font-size: 0.92rem; }
+  .explain ul { color: var(--muted); font-size: 0.9rem; margin: 8px 0 0 18px; }
+  .explain ul li { margin-bottom: 3px; }
+  .abbr-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+  .abbr-table td { padding: 7px 8px; border-top: 1px solid var(--line); color: var(--muted); vertical-align: middle; }
+  .abbr-table td:first-child { color: var(--text); font-weight: 700; width: 74px; white-space: nowrap; }
+  .abbr-table td:first-child svg { width: 15px; height: 15px; color: var(--gold); vertical-align: -3px; margin-right: 5px; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 40px 20px 60px;
+    border-top: 1px solid var(--line);
+    margin-top: 20px;
+  }
+
+  @media (max-width: 720px) {
+    .modal-inner { grid-template-columns: 1fr; }
+    .modal-inner .card-side { border-right: 0; border-bottom: 1px solid var(--line); max-width: 260px; margin: 0 auto; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="logo.jpg" alt="WBFC logo" />
+  <h1>Weekly Ballers Football Club</h1>
+  <p class="tag">Welcome to Weekly Ballers Football Club. Meet our team of gifted ballers.</p>
+  <div class="divider"></div>
+</header>
+
+<main class="wrap">
+
+  <section id="squad">
+    <h2 class="section-title">The Squad</h2>
+    <p class="section-sub">Ratings are modified periodically. Tap the cards to see more details.</p>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      <input type="search" id="search" placeholder="Search player name…" autocomplete="off" aria-label="Search player name" />
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="no-results" id="noResults" hidden>No players match that name.</p>
+  </section>
+
+  <section id="attributes">
+    <h2 class="section-title">Reading the Card</h2>
+    <p class="section-sub">What every number, badge and icon on a FIFA-style card actually means.</p>
+
+    <div class="explain-grid">
+
+      <div class="explain">
+        <h4><span class="dot"></span>Overall Rating (OVR)</h4>
+        <p>The large number in the top-left corner. A single 1–99 score summarising how strong the player is overall. The position sits just below it (e.g. <b>ST</b>, <b>CB</b>, <b>CM</b>).</p>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>The Six Face Stats</h4>
+        <p>The row along the bottom of the card — the headline attributes that drive almost everything in-game.</p>
+        <table class="abbr-table">
+          <tr><td data-attr="pac">PAC</td><td>Pace — sprint speed and acceleration</td></tr>
+          <tr><td data-attr="sho">SHO</td><td>Shooting — finishing, shot power, long shots</td></tr>
+          <tr><td data-attr="pas">PAS</td><td>Passing — vision, crossing, set pieces</td></tr>
+          <tr><td data-attr="dri">DRI</td><td>Dribbling — ball control, agility, balance</td></tr>
+          <tr><td data-attr="def">DEF</td><td>Defending — tackling, marking, interceptions</td></tr>
+          <tr><td data-attr="phy">PHY</td><td>Physical — strength, stamina, aggression</td></tr>
+        </table>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>Alternate Positions</h4>
+        <p>The stacked tags on the right edge (e.g. <b>LB</b>, <b>CB</b>). Extra positions the player can be played in without losing chemistry — useful for fitting the team together.</p>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>Preferred Foot &amp; Weak Foot</h4>
+        <p>The <b>R</b> / <b>L</b> badge shows the stronger foot. A player's weak-foot rating (1–5 stars) controls how accurate and powerful they are shooting or passing with the other foot.</p>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>PlayStyles &amp; PlayStyles+</h4>
+        <p>The small diamond icons down the left edge of the card. Signature abilities that change how a player performs specific actions — for example:</p>
+        <ul>
+          <li><b>Finesse Shot / Power Shot</b> — better curled or driven finishing</li>
+          <li><b>Incisive Pass / Pinged Pass</b> — sharper, faster passing</li>
+          <li><b>Quick Step / Rapid</b> — explosive acceleration</li>
+          <li><b>Jockey / Block / Anticipate</b> — stronger defending</li>
+          <li><b>Power Header / Bruiser</b> — physical dominance</li>
+        </ul>
+        <p style="margin-top:8px">A <b>gold</b> diamond (PlayStyles+) is the enhanced version — a noticeably bigger boost than the standard silver one.</p>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>Team Chemistry</h4>
+        <p>A team-building score, not printed on the base card. Each player earns chemistry points (up to <b>3</b>) when they share a <b>club</b>, <b>league</b> or <b>nation</b> with team-mates, for a squad total of <b>33</b>. The more links a player has, the bigger the in-game boost to their attributes. Play players in their listed position to keep chemistry active.</p>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>Chemistry Style</h4>
+        <p>A consumable applied to a card that re-distributes attribute upgrades across the six stats (it does not raise the OVR number). Common ones:</p>
+        <ul>
+          <li><b>Hunter</b> — +Pace, +Shooting</li>
+          <li><b>Shadow</b> — +Pace, +Defending</li>
+          <li><b>Engine</b> — +Pace, +Passing, +Dribbling</li>
+          <li><b>Sniper</b> — +Shooting, +Dribbling</li>
+          <li><b>Anchor</b> — +Pace, +Defending, +Physical</li>
+          <li><b>Basic</b> — small boost to everything</li>
+        </ul>
+        <p style="margin-top:8px">The boost scales with the player's chemistry — a style on 3 chemistry gives the full effect.</p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-inner" role="dialog" aria-modal="true" aria-labelledby="m-name">
+    <div class="card-side">
+      <img id="m-img" src="" alt="" />
+    </div>
+    <div class="info-side">
+      <button class="close-btn" id="closeBtn" aria-label="Close">&times;</button>
+      <h3 id="m-name"></h3>
+      <div class="role" id="m-role"></div>
+      <p class="blurb" id="m-blurb"></p>
+      <div class="stat-row" id="m-stats"></div>
+      <div class="about-title">About</div>
+      <p class="about" id="m-about"></p>
+      <div class="kv" id="m-alt"></div>
+      <div class="kv" id="m-foot"></div>
+      <div class="kv" id="m-chem"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  WBFC · Weekly Ballers Football Club — built for the group. ⚽<br />
+  Card ratings are for fun and bragging rights only.
+</footer>
+
+<script>
+// Custom-drawn attribute icons (original SVGs — not game assets).
+const ICONS = {
+  pac: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>',
+  sho: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>',
+  pas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16C6 7 13 4 20 6"/><path d="M15 3l5 3-3 5"/></svg>',
+  dri: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="8" r="3.5"/><path d="M12.5 10.5C6 13 5 17 5 20" stroke-dasharray="0.5 3.5"/></svg>',
+  def: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg>',
+  phy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 8v8M17.5 8v8M4 6.5v11M20 6.5v11M6.5 12h11"/></svg>',
+};
+
+const players = [
+  { name: "Valo", file: "Valo.png", ovr: 87, pos: "ST", alt: ["CAM","LW","RW"], foot: "Right",
+    pac:86, sho:91, pas:83, dri:90, def:83, phy:85,
+    blurb: "The talisman. Elite finishing and dribbling with the pace to run in behind — the first name on the teamsheet.",
+    about: "Arguably our best footballer and a genuine game-decider — Valo can win a match on his own. He can play up front, in midfield or out wide, and his shooting and dribbling are top-drawer.",
+    chem: "Best with Hunter or Sniper to push that shooting past 95." },
+  { name: "Ismael", file: "Ismael.png", ovr: 83, pos: "CM", alt: ["CAM","CDM"], foot: "Right",
+    pac:75, sho:73, pas:91, dri:87, def:83, phy:86,
+    blurb: "The engine room. Dictates tempo with 91 passing and glides past pressure — box-to-box with real physicality.",
+    about: "A maestro in midfield. A very smart player who reads and understands the game brilliantly, and an excellent passer of the ball.",
+    chem: "Engine or Maestro to round out the pace and keep the passing elite." },
+  { name: "Bouncey", file: "Bouncey.png", ovr: 81, pos: "CB", alt: ["CDM","CM"], foot: "Right",
+    pac:78, sho:72, pas:84, dri:82, def:86, phy:83,
+    blurb: "A ball-playing centre-half. Comfortable stepping into midfield, quick across the ground and clean on the ball.",
+    about: "A hugely versatile footballer who's superb with the ball at his feet. A rock in defence who can equally step into midfield and control the tempo of a game — an all-round committed, physical operator.",
+    chem: "Shadow for a lockdown defender, or Backbone to keep the passing." },
+  { name: "Paulo", file: "Paulo.png", ovr: 81, pos: "CB", alt: ["CDM"], foot: "Right",
+    pac:69, sho:75, pas:83, dri:84, def:87, phy:85,
+    blurb: "The wall. 87 defending and 85 physical — wins everything in the air and in the tackle. The leader at the back.",
+    about: "One of our most rugged centre backs, and outstanding with the ball at his feet. Reads the game well and can pick out pinpoint 20-yard passes.",
+    chem: "Anchor or Shadow to fix the pace and make him untouchable 1v1." },
+  { name: "Khell Magic", file: "Khell-Magic.png", ovr: 78, pos: "LW", alt: ["RW"], foot: "Right",
+    pac:73, sho:80, pas:82, dri:85, def:65, phy:80,
+    blurb: "The creator out wide. 85 dribbling and 82 passing — cuts inside on either flank and picks the final ball.",
+    about: "A silky, modern-day winger. He may not have blistering pace, but his close control, his knack for creating space to shoot, and his ability to take players on and beat them set him apart as one of WBFC's elite wingers.",
+    chem: "Engine or Hawk to lift the pace and add a goal threat." },
+  { name: "Adams", file: "Adams.png", ovr: 77, pos: "CDM", alt: [], foot: "Right",
+    pac:72, sho:70, pas:75, dri:77, def:84, phy:86,
+    blurb: "The screen in front of the back four. 86 physical, 84 defending — breaks play up and keeps it simple.",
+    about: "A relentlessly physical presence and a workaholic in midfield — nothing gets past him without his say-so.",
+    chem: "Anchor or Shadow — protect the defence and add the missing pace." },
+  { name: "Beks", file: "Beks.png", ovr: 77, pos: "RB", alt: ["LB","CB"], foot: "Right",
+    pac:72, sho:70, pas:85, dri:70, def:82, phy:83,
+    blurb: "An overlapping full-back with 85 passing. Solid defensively and can play either side or tuck in at centre-back.",
+    about: "One of the mainstays. Beyond his committed defending, he's an excellent passer who can hit pinpoint long-range balls. A right back by trade who can also fill in at left back or centre back.",
+    chem: "Shadow for the pure defender, or Engine to weaponise the crossing." },
+  { name: "Fabulous Joe", file: "Fabulous-Joe.png", ovr: 77, pos: "RW", alt: ["LW"], foot: "Right",
+    pac:90, sho:72, pas:75, dri:82, def:70, phy:72,
+    blurb: "Raw speed. 90 pace off either wing — get him in behind and let him run at defenders all game.",
+    about: "The flash of the team. A lightning-quick winger comfortable on either flank, brilliant at dribbling and beating players for pace — and a genuine team player with it.",
+    chem: "Hunter or Hawk to turn the pace into end product." },
+  { name: "Isaac", file: "Isaac.png", ovr: 74, pos: "LW", alt: ["RW"], foot: "Right",
+    pac:76, sho:80, pas:75, dri:77, def:70, phy:65,
+    blurb: "A direct wide forward with a shot on him — 80 shooting and a willingness to attack the back post.",
+    about: "A talented left winger who can also switch to the right. Dangerous in front of goal with well-placed shots, and very strong with his right foot.",
+    chem: "Hunter or Finisher to make the most of that shooting." },
+  { name: "El Smith", file: "El-Smith.png", ovr: 76, pos: "CB", alt: ["CDM"], foot: "Right",
+    pac:64, sho:75, pas:80, dri:70, def:85, phy:83,
+    blurb: "Old-school centre-half. 85 defending and 83 physical — reads the game, wins his duels, distributes tidily.",
+    about: "A very tough centre back to play against. His defensive ability, awareness and physicality let him neutralise modern strikers. He might not be the quickest, but he leads and organises the backline superbly.",
+    chem: "Shadow or Anchor — the pace boost is essential here." },
+];
+
+players.sort((a, b) => a.name.localeCompare(b.name));
+
+// Drop the attribute icons into the "Six Face Stats" table.
+document.querySelectorAll(".abbr-table td[data-attr]").forEach(td => {
+  td.insertAdjacentHTML("afterbegin", ICONS[td.dataset.attr]);
+});
+
+const grid = document.getElementById("grid");
+const modal = document.getElementById("modal");
+const noResults = document.getElementById("noResults");
+const search = document.getElementById("search");
+
+players.forEach((p, i) => {
+  const btn = document.createElement("button");
+  btn.className = "card-btn";
+  btn.dataset.name = p.name.toLowerCase();
+  btn.innerHTML = `
+    <img src="cards/${p.file}" alt="${p.name} FIFA card — ${p.ovr} ${p.pos}" loading="lazy" />
+    <span class="name">${p.name}</span>`;
+  btn.addEventListener("click", () => openModal(i));
+  grid.appendChild(btn);
+});
+
+function applyFilter() {
+  const q = search.value.trim().toLowerCase();
+  let shown = 0;
+  grid.querySelectorAll(".card-btn").forEach(btn => {
+    const match = btn.dataset.name.includes(q);
+    btn.style.display = match ? "" : "none";
+    if (match) shown++;
+  });
+  noResults.hidden = shown > 0;
+}
+
+search.addEventListener("input", applyFilter);
+
+function openModal(i) {
+  const p = players[i];
+  document.getElementById("m-img").src = `cards/${p.file}`;
+  document.getElementById("m-img").alt = `${p.name} FIFA card`;
+  document.getElementById("m-name").textContent = p.name;
+  document.getElementById("m-role").textContent = `${p.ovr} OVR · ${p.pos}`;
+  document.getElementById("m-blurb").textContent = p.blurb;
+  document.getElementById("m-about").textContent = p.about;
+
+  const stats = [["pac","PAC",p.pac],["sho","SHO",p.sho],["pas","PAS",p.pas],["dri","DRI",p.dri],["def","DEF",p.def],["phy","PHY",p.phy]];
+  document.getElementById("m-stats").innerHTML = stats.map(s =>
+    `<div class="stat"><div class="k">${ICONS[s[0]]}${s[1]}</div><div class="v">${s[2]}</div></div>`).join("");
+
+  document.getElementById("m-alt").innerHTML = p.alt.length
+    ? `<b>Alternate positions:</b> ${p.alt.join(", ")}`
+    : `<b>Alternate positions:</b> none`;
+  document.getElementById("m-foot").innerHTML = `<b>Preferred foot:</b> ${p.foot}`;
+  document.getElementById("m-chem").innerHTML = `<b>Chemistry style tip:</b> ${p.chem}`;
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("closeBtn").addEventListener("click", closeModal);
+modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+</script>
+
+</body>
+</html>
