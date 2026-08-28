@@ -91,10 +91,11 @@
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 22px;
+    gap: 34px 22px;
   }
   .card-btn {
     background: none; border: 0; padding: 0; cursor: pointer;
+    color: var(--text);
     display: flex; flex-direction: column; align-items: center;
     transition: transform 0.18s ease, filter 0.18s ease;
   }
@@ -110,10 +111,6 @@
     font-weight: 700;
     font-size: 0.98rem;
     display: flex; align-items: center; justify-content: center; gap: 5px;
-  }
-  .card-btn .meta {
-    color: var(--muted);
-    font-size: 0.82rem;
   }
 
   /* Rating trend indicator */
@@ -223,7 +220,7 @@
   @media (max-width: 720px) {
     .modal-inner { grid-template-columns: 1fr; }
     .modal-inner .card-side { border-right: 0; border-bottom: 1px solid var(--line); max-width: 260px; margin: 0 auto; }
-    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 26px 16px; }
   }
 </style>
 </head>
@@ -453,8 +450,8 @@ players.forEach((p, i) => {
   btn.className = "card-btn";
   btn.dataset.name = p.name.toLowerCase();
   btn.innerHTML = `
-    <img src="cards/${p.file}" alt="${p.name} FIFA card — ${p.ovr} ${p.pos}" loading="lazy" />
-    <span class="name">${p.name}${SHOW_TREND ? " " + trendHTML(p) : ""}</span>`;
+    <img src="cards/${p.file}" alt="${p.name} FIFA card — ${p.ovr} ${p.pos}" loading="lazy" />${
+      SHOW_TREND ? `\n    <span class="name">${p.name} ${trendHTML(p)}</span>` : ""}`;
   btn.addEventListener("click", () => openModal(i));
   grid.appendChild(btn);
 });
