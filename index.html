@@ -106,7 +106,7 @@
     margin-top: 10px;
     font-weight: 700;
     font-size: 0.98rem;
-    display: flex; align-items: center; gap: 5px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
   }
   .card-btn .meta {
     color: var(--muted);
@@ -257,7 +257,7 @@
         <p>The large number in the top-left corner. A single 1–99 score summarising how strong the player is overall. The position sits just below it (e.g. <b>ST</b>, <b>CB</b>, <b>CM</b>).</p>
       </div>
 
-      <div class="explain">
+      <div class="explain" id="trend-explain">
         <h4><span class="dot"></span>Rating Trend</h4>
         <p>The small arrow next to each name. Ratings are reviewed monthly against current form — a <span class="trend up">▲</span> means the OVR went up since the last update, <span class="trend down">▼</span> means it dropped, and <span class="trend same">▬</span> means no change.</p>
       </div>
@@ -359,6 +359,10 @@ const ICONS = {
 };
 
 // Rating-trend arrows vs last month's update.
+// Feature is built but parked — flip to true to show the arrows (and the
+// "Rating Trend" explainer card) across the site.
+const SHOW_TREND = false;
+
 const TREND_SVG = {
   up: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l8 10h-5v6h-6v-6H4z"/></svg>',
   down: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20l-8-10h5V4h6v6h5z"/></svg>',
@@ -367,6 +371,7 @@ const TREND_SVG = {
 const TREND_LABEL = { up: "Rating up this month", down: "Rating down this month", same: "Rating unchanged" };
 
 function trendHTML(p) {
+  if (!SHOW_TREND) return "";
   const t = p.trend || "same";
   const delta = t === "up" ? "+" + (p.delta || 1) : t === "down" ? "-" + (p.delta || 1) : "";
   return `<span class="trend ${t}" title="${TREND_LABEL[t]}" role="img" aria-label="${TREND_LABEL[t]}">${TREND_SVG[t]}${delta}</span>`;
@@ -427,6 +432,9 @@ const players = [
 
 players.sort((a, b) => a.name.localeCompare(b.name));
 
+// Rating-trend feature is parked — hide its explainer card until SHOW_TREND is on.
+if (!SHOW_TREND) document.getElementById("trend-explain")?.remove();
+
 // Drop the attribute icons into the "Six Face Stats" table.
 document.querySelectorAll(".abbr-table td[data-attr]").forEach(td => {
   td.insertAdjacentHTML("afterbegin", ICONS[td.dataset.attr]);
@@ -443,7 +451,7 @@ players.forEach((p, i) => {
   btn.dataset.name = p.name.toLowerCase();
   btn.innerHTML = `
     <img src="cards/${p.file}" alt="${p.name} FIFA card — ${p.ovr} ${p.pos}" loading="lazy" />
-    <span class="name">${p.name} ${trendHTML(p)}</span>`;
+    <span class="name">${p.name}${SHOW_TREND ? " " + trendHTML(p) : ""}</span>`;
   btn.addEventListener("click", () => openModal(i));
   grid.appendChild(btn);
 });
@@ -466,7 +474,7 @@ function openModal(i) {
   document.getElementById("m-img").src = `cards/${p.file}`;
   document.getElementById("m-img").alt = `${p.name} FIFA card`;
   document.getElementById("m-name").textContent = p.name;
-  document.getElementById("m-role").innerHTML = `${p.ovr} OVR · ${p.pos} ${trendHTML(p)}`;
+  document.getElementById("m-role").innerHTML = `${p.ovr} OVR · ${p.pos}${SHOW_TREND ? " " + trendHTML(p) : ""}`;
   document.getElementById("m-blurb").textContent = p.blurb;
   document.getElementById("m-about").textContent = p.about;
 
