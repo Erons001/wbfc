@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WBFC — Player Stats</title>
+<meta name="description" content="Weekly Ballers Football Club — goals and assists by season." />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="favicon.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="index.html"><img src="logo.jpg" alt="" /><span>WBFC</span></a>
+  <nav class="sidebar-nav">
+    <a href="index.html">Squad</a>
+    <a href="stats.html" class="active">Player Stats</a>
+  </nav>
+  <div class="side-foot">Weekly Ballers FC</div>
+</aside>
+<div class="sidebar-scrim" id="scrim"></div>
+
+<div class="content">
+
+<header>
+  <img class="logo" src="logo.jpg" alt="WBFC logo" />
+  <h1>Player Stats</h1>
+  <p class="tag">Goals &amp; assists, recorded game by game.</p>
+  <div class="divider"></div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="stats-toolbar">
+      <select id="season" aria-label="Choose season"></select>
+    </div>
+    <p class="stats-summary" id="summary"></p>
+
+    <div class="table-card">
+      <h3><span class="dot"></span>Top Scorers</h3>
+      <div class="table-scroll">
+        <table class="league-table">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Player</th>
+              <th class="num">Goals</th>
+            </tr>
+          </thead>
+          <tbody id="scorers"></tbody>
+        </table>
+      </div>
+      <p class="empty-note" id="scorers-empty" hidden>No goals recorded yet this season.</p>
+    </div>
+
+    <div class="table-card">
+      <h3><span class="dot"></span>Top Assists</h3>
+      <div class="table-scroll">
+        <table class="league-table">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Player</th>
+              <th class="num">Assists</th>
+            </tr>
+          </thead>
+          <tbody id="assisters"></tbody>
+        </table>
+      </div>
+      <p class="empty-note" id="assisters-empty" hidden>No assists recorded yet this season.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Match Log</h2>
+    <p class="section-sub">Every recorded game, most recent first.</p>
+    <div id="matches"></div>
+  </section>
+
+</main>
+
+<footer>
+  WBFC · Weekly Ballers Football Club — built for the group. ⚽<br />
+  Stats are recorded by hand after each game.
+</footer>
+
+</div><!-- /.content -->
+
+<script src="nav.js"></script>
+<script src="season-stats.js"></script>
+<script>
+const seasonSelect = document.getElementById("season");
+const years = Object.keys(SEASON_STATS.seasons).map(Number).sort((a, b) => b - a);
+years.forEach(y => {
+  const opt = document.createElement("option");
+  opt.value = y;
+  opt.textContent = y;
+  seasonSelect.appendChild(opt);
+});
+seasonSelect.value = String(SEASON_STATS.currentSeason);
+
+function fmtDate(iso) {
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
+// { "Name": n } -> [[name, n], ...] sorted by count desc then name.
+function ranked(map) {
+  return Object.entries(map || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
+
+function fillTable(bodyId, emptyId, rows, statKey) {
+  const body = document.getElementById(bodyId);
+  const empty = document.getElementById(emptyId);
+  body.innerHTML = rows.map((r, i) => `
+    <tr class="${i === 0 ? "leader" : ""}">
+      <td class="rank">${i + 1}</td>
+      <td class="player">${r.name}</td>
+      <td class="num big">${r[statKey]}</td>
+    </tr>`).join("");
+  empty.hidden = rows.length > 0;
+  body.closest("table").hidden = rows.length === 0;
+}
+
+function matchLog(year) {
+  const season = SEASON_STATS.seasons[year];
+  const wrap = document.getElementById("matches");
+  const matches = season ? season.matches.slice().reverse() : [];
+  if (!matches.length) {
+    wrap.innerHTML = `<p class="empty-note">No games recorded yet for ${year}.</p>`;
+    return;
+  }
+  const col = (title, map) => {
+    const rows = ranked(map);
+    const inner = rows.length
+      ? rows.map(([name, n]) => `<div class="row"><span>${name}</span><span class="n">${n}</span></div>`).join("")
+      : `<div class="none">None recorded</div>`;
+    return `<div class="col"><h5>${title}</h5>${inner}</div>`;
+  };
+  wrap.innerHTML = matches.map(m => `
+    <div class="match">
+      <div class="head">
+        <span class="md">${m.label}</span>
+        <span class="date">${fmtDate(m.date)}</span>
+      </div>
+      <div class="cols">
+        ${col("Goals", m.goals)}
+        ${col("Assists", m.assists)}
+      </div>
+    </div>`).join("");
+}
+
+function render() {
+  const year = Number(seasonSelect.value);
+  const meta = seasonMeta(year);
+  document.getElementById("summary").innerHTML =
+    `<b>${year}</b> · ${meta.matches} ${meta.matches === 1 ? "matchday" : "matchdays"} played · ` +
+    `<b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists`;
+  fillTable("scorers", "scorers-empty", seasonLeaderboard(year, "goals"), "goals");
+  fillTable("assisters", "assisters-empty", seasonLeaderboard(year, "assists"), "assists");
+  matchLog(year);
+}
+
+seasonSelect.addEventListener("change", render);
+render();
+</script>
+
+</body>
+</html>

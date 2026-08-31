@@ -8,223 +8,22 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
 <link rel="icon" type="image/png" sizes="96x96" href="favicon.png" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<style>
-  :root {
-    --bg: #0a0e1a;
-    --bg-2: #10162a;
-    --panel: #141c33;
-    --line: rgba(255,255,255,0.08);
-    --text: #eef2ff;
-    --muted: #97a0c0;
-    --gold: #f5d15f;
-    --red: #e23b4a;
-    --blue: #2f6df6;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: radial-gradient(1200px 600px at 50% -10%, #1b2647 0%, var(--bg) 55%) fixed, var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
-
-  /* Header */
-  header {
-    text-align: center;
-    padding: 54px 20px 30px;
-  }
-  header img.logo {
-    width: 150px; height: 150px;
-    border-radius: 24px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-  }
-  header h1 {
-    font-size: clamp(1.8rem, 4vw, 2.9rem);
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    margin-top: 18px;
-  }
-  header p.tag {
-    color: var(--muted);
-    font-size: 1.05rem;
-    margin-top: 6px;
-  }
-  .divider {
-    height: 3px; width: 90px;
-    margin: 22px auto 0;
-    background: linear-gradient(90deg, var(--red), var(--gold), var(--blue));
-    border-radius: 3px;
-  }
-
-  section { padding: 40px 0; }
-  h2.section-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-  p.section-sub {
-    color: var(--muted);
-    margin-bottom: 26px;
-  }
-
-  /* Search */
-  .search-wrap { position: relative; max-width: 340px; margin: 0 0 24px; }
-  .search-wrap input {
-    width: 100%;
-    background: var(--bg-2);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    color: var(--text);
-    font-size: 0.95rem;
-    padding: 11px 14px 11px 38px;
-    outline: none;
-  }
-  .search-wrap input:focus { border-color: var(--gold); }
-  .search-wrap input::placeholder { color: var(--muted); }
-  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; fill: var(--muted); }
-  .no-results { color: var(--muted); padding: 20px 0; }
-
-  /* Card grid */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 34px 22px;
-  }
-  .card-btn {
-    background: none; border: 0; padding: 0; cursor: pointer;
-    color: var(--text);
-    display: flex; flex-direction: column; align-items: center;
-    transition: transform 0.18s ease, filter 0.18s ease;
-  }
-  .card-btn:hover, .card-btn:focus-visible { transform: translateY(-8px) scale(1.02); outline: none; }
-  .card-btn:focus-visible img { box-shadow: 0 0 0 3px var(--gold); border-radius: 10px; }
-  .card-btn img {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 14px 24px rgba(0,0,0,0.45));
-  }
-  .card-btn .name {
-    margin-top: 10px;
-    font-weight: 700;
-    font-size: 0.98rem;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-  }
-
-  /* Rating trend indicator */
-  .trend { display: inline-flex; align-items: center; gap: 3px; font-size: 0.78rem; font-weight: 700; }
-  .trend svg { width: 11px; height: 11px; }
-  .trend.up { color: #3fb950; }
-  .trend.down { color: var(--red); }
-  .trend.same { color: var(--muted); }
-  .modal-inner .role .trend { font-size: 0.85rem; margin-left: 8px; }
-  .modal-inner .role .trend svg { width: 12px; height: 12px; }
-
-  /* Modal */
-  .modal {
-    position: fixed; inset: 0;
-    background: rgba(4,7,15,0.82);
-    backdrop-filter: blur(6px);
-    display: none;
-    align-items: center; justify-content: center;
-    padding: 24px;
-    z-index: 50;
-  }
-  .modal.open { display: flex; }
-  .modal-inner {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    max-width: 860px; width: 100%;
-    max-height: 90vh; overflow-y: auto;
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 0;
-  }
-  .modal-inner .card-side {
-    background: linear-gradient(180deg, #1a2340, #0f1526);
-    padding: 26px;
-    display: flex; align-items: center; justify-content: center;
-    border-right: 1px solid var(--line);
-  }
-  .modal-inner .card-side img { width: 100%; height: auto; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5)); }
-  .modal-inner .info-side { padding: 28px; position: relative; }
-  .modal-inner h3 { font-size: 1.6rem; font-weight: 800; }
-  .modal-inner .role { color: var(--gold); font-weight: 600; margin-bottom: 14px; }
-  .modal-inner .blurb { color: var(--muted); margin-bottom: 20px; font-size: 0.96rem; }
-  .modal-inner .about-title {
-    font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--gold); font-weight: 700; margin-bottom: 6px;
-  }
-  .modal-inner .about {
-    color: var(--text); font-size: 0.95rem; line-height: 1.65;
-    margin-bottom: 20px; padding-left: 12px; border-left: 2px solid var(--line);
-  }
-
-  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-  .stat {
-    background: var(--bg-2);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 10px 12px;
-    text-align: center;
-  }
-  .stat .k { color: var(--muted); font-size: 0.72rem; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-  .stat .k svg { width: 13px; height: 13px; color: var(--gold); }
-  .stat .v { font-size: 1.3rem; font-weight: 800; }
-
-  .kv { font-size: 0.9rem; margin-bottom: 8px; }
-  .kv b { color: var(--gold); }
-
-  .close-btn {
-    position: absolute; top: 14px; right: 16px;
-    background: var(--bg-2); border: 1px solid var(--line); color: var(--text);
-    width: 34px; height: 34px; border-radius: 50%;
-    font-size: 1.1rem; cursor: pointer; line-height: 1;
-  }
-  .close-btn:hover { background: var(--red); }
-
-  /* Attributes explainer */
-  .explain-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 18px;
-  }
-  .explain {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 20px;
-  }
-  .explain h4 { font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-  .explain h4 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); flex: none; }
-  .explain p { color: var(--muted); font-size: 0.92rem; }
-  .explain ul { color: var(--muted); font-size: 0.9rem; margin: 8px 0 0 18px; }
-  .explain ul li { margin-bottom: 3px; }
-  .abbr-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-  .abbr-table td { padding: 7px 8px; border-top: 1px solid var(--line); color: var(--muted); vertical-align: middle; }
-  .abbr-table td:first-child { color: var(--text); font-weight: 700; width: 74px; white-space: nowrap; }
-  .abbr-table td:first-child svg { width: 15px; height: 15px; color: var(--gold); vertical-align: -3px; margin-right: 5px; }
-
-  footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.85rem;
-    padding: 40px 20px 60px;
-    border-top: 1px solid var(--line);
-    margin-top: 20px;
-  }
-
-  @media (max-width: 720px) {
-    .modal-inner { grid-template-columns: 1fr; }
-    .modal-inner .card-side { border-right: 0; border-bottom: 1px solid var(--line); max-width: 260px; margin: 0 auto; }
-    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 26px 16px; }
-  }
-</style>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+<button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="index.html"><img src="logo.jpg" alt="" /><span>WBFC</span></a>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="active">Squad</a>
+    <a href="stats.html">Player Stats</a>
+  </nav>
+  <div class="side-foot">Weekly Ballers FC</div>
+</aside>
+<div class="sidebar-scrim" id="scrim"></div>
+
+<div class="content">
 
 <header>
   <img class="logo" src="logo.jpg" alt="WBFC logo" />
@@ -264,7 +63,7 @@
 
       <div class="explain">
         <h4><span class="dot"></span>The Six Face Stats</h4>
-        <p>The row along the bottom of the card — the headline attributes that drive almost everything in-game.</p>
+        <p>The row along the bottom of an outfield card — the headline attributes that drive almost everything in-game.</p>
         <table class="abbr-table">
           <tr><td data-attr="pac">PAC</td><td>Pace — sprint speed and acceleration</td></tr>
           <tr><td data-attr="sho">SHO</td><td>Shooting — finishing, shot power, long shots</td></tr>
@@ -273,6 +72,24 @@
           <tr><td data-attr="def">DEF</td><td>Defending — tackling, marking, interceptions</td></tr>
           <tr><td data-attr="phy">PHY</td><td>Physical — strength, stamina, aggression</td></tr>
         </table>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>Goalkeeper Stats</h4>
+        <p>Keepers get their own six stats instead of the outfield ones.</p>
+        <table class="abbr-table">
+          <tr><td>DIV</td><td>Diving — reach and spring across the goal</td></tr>
+          <tr><td>HAN</td><td>Handling — holding and catching the ball</td></tr>
+          <tr><td>KIC</td><td>Kicking — distribution range and accuracy</td></tr>
+          <tr><td>REF</td><td>Reflexes — reaction speed to close-range shots</td></tr>
+          <tr><td>SPD</td><td>Speed — sprint speed off the line</td></tr>
+          <tr><td>POS</td><td>Positioning — reading the game and set position</td></tr>
+        </table>
+      </div>
+
+      <div class="explain">
+        <h4><span class="dot"></span>Season Goals &amp; Assists</h4>
+        <p>Each card now shows the player's goals and assists for the current season, pulled from the <a href="stats.html" style="color:var(--gold)">Player Stats</a> page. Updated after every game.</p>
       </div>
 
       <div class="explain">
@@ -312,7 +129,7 @@
           <li><b>Engine</b> — +Pace, +Passing, +Dribbling</li>
           <li><b>Sniper</b> — +Shooting, +Dribbling</li>
           <li><b>Anchor</b> — +Pace, +Defending, +Physical</li>
-          <li><b>Basic</b> — small boost to everything</li>
+          <li><b>Glove / Cat</b> — goalkeeper styles (+Diving/Handling or +Reflexes)</li>
         </ul>
         <p style="margin-top:8px">The boost scales with the player's chemistry — a style on 3 chemistry gives the full effect.</p>
       </div>
@@ -333,6 +150,8 @@
       <div class="role" id="m-role"></div>
       <p class="blurb" id="m-blurb"></p>
       <div class="stat-row" id="m-stats"></div>
+      <div class="about-title" id="m-season-title">2026 Season</div>
+      <div class="season-row" id="m-season"></div>
       <div class="about-title">About</div>
       <p class="about" id="m-about"></p>
       <div class="kv" id="m-alt"></div>
@@ -347,6 +166,10 @@
   Card ratings are for fun and bragging rights only.
 </footer>
 
+</div><!-- /.content -->
+
+<script src="nav.js"></script>
+<script src="season-stats.js"></script>
 <script>
 // Custom-drawn attribute icons (original SVGs — not game assets).
 const ICONS = {
@@ -357,6 +180,8 @@ const ICONS = {
   def: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg>',
   phy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6.5 8v8M17.5 8v8M4 6.5v11M20 6.5v11M6.5 12h11"/></svg>',
 };
+// Goalkeeper stat icon (a glove) — reused for all six keeper stats.
+const GK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 12V7a1.4 1.4 0 0 1 2.8 0v3.5m0-3.5V5a1.4 1.4 0 0 1 2.8 0v5.5m0-2.5a1.4 1.4 0 0 1 2.8 0v5.5A6 6 0 0 1 10.4 21 6 6 0 0 1 5 17.5L3.7 13a1.4 1.4 0 0 1 2.6-1L8 15"/></svg>';
 
 // Rating-trend arrows vs last month's update.
 // Feature is built but parked — flip to true to show the arrows (and the
@@ -418,16 +243,36 @@ const players = [
     blurb: "Raw speed. 90 pace off either wing — get him in behind and let him run at defenders all game.",
     about: "The flash of the team. A lightning-quick winger comfortable on either flank, brilliant at dribbling and beating players for pace — and a genuine team player with it.",
     chem: "Hunter or Hawk to turn the pace into end product." },
+  { name: "Daniel", file: "Daniel.png", ovr: 78, pos: "LW", alt: ["RW"], foot: "Right", trend: "up", delta: 1,
+    pac:80, sho:83, pas:79, dri:75, def:72, phy:79,
+    blurb: "A quick, direct winger with a real goal threat — 83 shooting and 80 pace off either flank.",
+    about: "A pacey wide forward comfortable on the left or the right. Gets his shots away early, runs the channels all game, and brings genuine end product from wide areas.",
+    chem: "Hunter or Hawk to turn the pace and shooting into goals." },
   { name: "Isaac", file: "Isaac.png", ovr: 74, pos: "LW", alt: ["RW"], foot: "Right", trend: "up", delta: 1,
     pac:76, sho:80, pas:75, dri:77, def:70, phy:65,
     blurb: "A direct wide forward with a shot on him — 80 shooting and a willingness to attack the back post.",
     about: "A talented left winger who can also switch to the right. Dangerous in front of goal with well-placed shots, and very strong with his right foot.",
     chem: "Hunter or Finisher to make the most of that shooting." },
+  { name: "Erinie", file: "Erinie.png", ovr: 76, pos: "ST", alt: [], foot: "Left", trend: "up", delta: 1,
+    pac:76, sho:80, pas:77, dri:79, def:65, phy:76,
+    blurb: "A left-footed number nine. 80 shooting, sharp movement in the box and strong enough to lead the line.",
+    about: "A natural finisher through the middle. Left-footed, lives on the shoulder of the last defender, and drops in to link play. Opened the 2026 season with a four-goal haul.",
+    chem: "Hunter or Finisher — lean straight into the finishing." },
+  { name: "Erons", file: "Erons.png", ovr: 71, pos: "RB", alt: ["LB","CB"], foot: "Right", trend: "up", delta: 1,
+    pac:71, sho:65, pas:72, dri:70, def:75, phy:72,
+    blurb: "A dependable, versatile defender — right back by trade who can cover the whole back line.",
+    about: "A reliable full-back who keeps things simple and positions himself well. Happy at right back, left back or centre back, and never shirks the defensive work.",
+    chem: "Shadow or Anchor to sharpen the defending and add a yard of pace." },
   { name: "El Smith", file: "El-Smith.png", ovr: 76, pos: "CB", alt: ["CDM"], foot: "Right", trend: "up", delta: 1,
     pac:64, sho:75, pas:80, dri:70, def:85, phy:83,
     blurb: "Old-school centre-half. 85 defending and 83 physical — reads the game, wins his duels, distributes tidily.",
     about: "A very tough centre back to play against. His defensive ability, awareness and physicality let him neutralise modern strikers. He might not be the quickest, but he leads and organises the backline superbly.",
     chem: "Shadow or Anchor — the pace boost is essential here." },
+  { name: "Feleb", file: "Feleb.png", ovr: 80, pos: "GK", alt: ["CB"], foot: "Right", trend: "up", delta: 1,
+    gk: { div:86, han:75, kic:78, ref:88, spd:70, pos:83 },
+    blurb: "The last line. 88 reflexes and 86 diving — commands his box and pulls off the big saves.",
+    about: "A commanding goalkeeper with lightning reflexes and strong shot-stopping. Reads crosses well, distributes tidily, and at a push can even fill in at centre back.",
+    chem: "Glove or Cat to sharpen the reflexes and handling." },
 ];
 
 players.sort((a, b) => a.name.localeCompare(b.name));
@@ -478,9 +323,20 @@ function openModal(i) {
   document.getElementById("m-blurb").textContent = p.blurb;
   document.getElementById("m-about").textContent = p.about;
 
-  const stats = [["pac","PAC",p.pac],["sho","SHO",p.sho],["pas","PAS",p.pas],["dri","DRI",p.dri],["def","DEF",p.def],["phy","PHY",p.phy]];
-  document.getElementById("m-stats").innerHTML = stats.map(s =>
-    `<div class="stat"><div class="k">${ICONS[s[0]]}${s[1]}</div><div class="v">${s[2]}</div></div>`).join("");
+  const rows = p.gk
+    ? [["DIV",p.gk.div],["HAN",p.gk.han],["KIC",p.gk.kic],["REF",p.gk.ref],["SPD",p.gk.spd],["POS",p.gk.pos]]
+        .map(([label, val]) => ({ label, val, icon: GK_ICON }))
+    : ["pac","sho","pas","dri","def","phy"]
+        .map(k => ({ label: k.toUpperCase(), val: p[k], icon: ICONS[k] }));
+  document.getElementById("m-stats").innerHTML = rows.map(r =>
+    `<div class="stat"><div class="k">${r.icon}${r.label}</div><div class="v">${r.val}</div></div>`).join("");
+
+  const season = SEASON_STATS.currentSeason;
+  const t = seasonTotals(p.name, season);
+  document.getElementById("m-season-title").textContent = `${season} Season`;
+  document.getElementById("m-season").innerHTML =
+    `<div class="stat"><div class="k">GOALS</div><div class="v">${t.goals}</div></div>
+     <div class="stat"><div class="k">ASSISTS</div><div class="v">${t.assists}</div></div>`;
 
   document.getElementById("m-alt").innerHTML = p.alt.length
     ? `<b>Alternate positions:</b> ${p.alt.join(", ")}`
@@ -491,17 +347,28 @@ function openModal(i) {
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+  history.replaceState(null, "", "#p=" + encodeURIComponent(p.name));
 }
 
 function closeModal() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
+  history.replaceState(null, "", location.pathname);
 }
 
 document.getElementById("closeBtn").addEventListener("click", closeModal);
 modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+// Open a player's card directly via #p=<name> (used by links from the stats page).
+(function openFromHash() {
+  const m = location.hash.match(/^#p=(.+)$/);
+  if (!m) return;
+  const name = decodeURIComponent(m[1]).toLowerCase();
+  const idx = players.findIndex(p => p.name.toLowerCase() === name);
+  if (idx >= 0) openModal(idx);
+})();
 </script>
 
 </body>
