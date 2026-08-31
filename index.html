@@ -345,7 +345,8 @@ function openModal(i) {
   const t = seasonTotals(p.name, season);
   document.getElementById("m-season-title").textContent = `${season} Season`;
   document.getElementById("m-season").innerHTML =
-    `<div class="stat"><div class="k">GOALS</div><div class="v">${t.goals}</div></div>
+    `<div class="stat"><div class="k">APPS</div><div class="v">${t.apps}</div></div>
+     <div class="stat"><div class="k">GOALS</div><div class="v">${t.goals}</div></div>
      <div class="stat"><div class="k">ASSISTS</div><div class="v">${t.assists}</div></div>`;
 
   document.getElementById("m-alt").innerHTML = p.alt.length

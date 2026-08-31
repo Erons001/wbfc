@@ -73,6 +73,23 @@
       </div>
       <p class="empty-note" id="assisters-empty" hidden>No assists recorded yet this season.</p>
     </div>
+
+    <div class="table-card">
+      <h3><span class="dot"></span>Most Appearances</h3>
+      <div class="table-scroll">
+        <table class="league-table">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Player</th>
+              <th class="num">Apps</th>
+            </tr>
+          </thead>
+          <tbody id="appearances"></tbody>
+        </table>
+      </div>
+      <p class="empty-note" id="appearances-empty" hidden>No games recorded yet this season.</p>
+    </div>
   </section>
 
   <section>
@@ -141,17 +158,22 @@ function matchLog(year) {
       : `<div class="none">None recorded</div>`;
     return `<div class="col"><h5>${title}</h5>${inner}</div>`;
   };
-  wrap.innerHTML = matches.map(m => `
+  wrap.innerHTML = matches.map(m => {
+    const roster = (m.played || []).slice().sort((a, b) => a.localeCompare(b));
+    return `
     <div class="match">
       <div class="head">
         <span class="md">${m.label}</span>
         <span class="date">${fmtDate(m.date)}</span>
+        ${roster.length ? `<span class="date">· ${roster.length} played</span>` : ""}
       </div>
       <div class="cols">
         ${col("Goals", m.goals)}
         ${col("Assists", m.assists)}
       </div>
-    </div>`).join("");
+      ${roster.length ? `<div class="roster"><h5>Played</h5><span>${roster.join(", ")}</span></div>` : ""}
+    </div>`;
+  }).join("");
 }
 
 function render() {
@@ -159,9 +181,10 @@ function render() {
   const meta = seasonMeta(year);
   document.getElementById("summary").innerHTML =
     `<b>${year}</b> · ${meta.matches} ${meta.matches === 1 ? "matchday" : "matchdays"} played · ` +
-    `<b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists`;
+    `<b>${meta.players}</b> players · <b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists`;
   fillTable("scorers", "scorers-empty", seasonLeaderboard(year, "goals"), "goals");
   fillTable("assisters", "assisters-empty", seasonLeaderboard(year, "assists"), "assists");
+  fillTable("appearances", "appearances-empty", seasonLeaderboard(year, "apps"), "apps");
   matchLog(year);
 }
 
