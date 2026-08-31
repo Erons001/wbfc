@@ -20,8 +20,8 @@ const SEASON_STATS = {
         {
           date: "2026-08-30",
           label: "Matchday 1",
-          goals:   { "Valo": 6, "Erinie": 4, "Isaac": 2, "Paulo": 1, "Khell Magic": 1 },
-          assists: { "Erinie": 1, "Hoes": 1 },
+          goals:   { "Valo": 6, "Erinie": 4, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
+          assists: { "Erinie": 1, "Ismael": 1 },
         },
       ],
     },
