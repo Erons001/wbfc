@@ -46,6 +46,7 @@
           <tbody id="scorers"></tbody>
         </table>
       </div>
+      <div class="table-more" id="scorers-more" hidden></div>
       <p class="empty-note" id="scorers-empty" hidden>No goals recorded yet this season.</p>
     </div>
 
@@ -64,6 +65,7 @@
           <tbody id="assisters"></tbody>
         </table>
       </div>
+      <div class="table-more" id="assisters-more" hidden></div>
       <p class="empty-note" id="assisters-empty" hidden>No assists recorded yet this season.</p>
     </div>
 
@@ -124,9 +126,10 @@ function fillTable(bodyId, emptyId, rows, statKey, opts) {
   opts = opts || {};
   const body = document.getElementById(bodyId);
   const empty = document.getElementById(emptyId);
+  const collapseAt = opts.collapseAt || 0;
   const shown = opts.limit ? rows.slice(0, opts.limit) : rows;
   body.innerHTML = shown.map((r, i) => `
-    <tr class="${i === 0 ? "leader" : ""}">
+    <tr class="${i === 0 ? "leader" : ""}${collapseAt && i >= collapseAt ? " extra" : ""}">
       <td class="rank">${i === 0 ? '<span class="medal" title="Leads the race" aria-label="1st">🥇</span>' : i + 1}</td>
       <td class="player">${r.name}</td>
       ${opts.showApps ? `<td class="num">${r.apps}</td>` : ""}
@@ -134,6 +137,27 @@ function fillTable(bodyId, emptyId, rows, statKey, opts) {
     </tr>`).join("");
   empty.hidden = rows.length > 0;
   body.closest("table").hidden = rows.length === 0;
+
+  if (opts.moreId) {
+    const more = document.getElementById(opts.moreId);
+    const card = body.closest(".table-card");
+    card.classList.remove("expanded");
+    if (collapseAt && shown.length > collapseAt) {
+      more.hidden = false;
+      more.innerHTML = `<button class="expand-btn" type="button"></button>`;
+      const btn = more.querySelector("button");
+      const label = () => (card.classList.contains("expanded")
+        ? "Show fewer" : `Show all ${shown.length}`);
+      btn.textContent = label();
+      btn.addEventListener("click", () => {
+        card.classList.toggle("expanded");
+        btn.textContent = label();
+      });
+    } else {
+      more.hidden = true;
+      more.innerHTML = "";
+    }
+  }
 }
 
 function matchLog(year) {
@@ -175,8 +199,8 @@ function render() {
   document.getElementById("summary").innerHTML =
     `<b>${year}</b> · ${meta.matches} ${meta.matches === 1 ? "matchday" : "matchdays"} played · ` +
     `<b>${meta.players}</b> players · <b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists`;
-  fillTable("scorers", "scorers-empty", seasonLeaderboard(year, "goals"), "goals", { showApps: true });
-  fillTable("assisters", "assisters-empty", seasonLeaderboard(year, "assists"), "assists", { showApps: true });
+  fillTable("scorers", "scorers-empty", seasonLeaderboard(year, "goals"), "goals", { showApps: true, collapseAt: 6, moreId: "scorers-more" });
+  fillTable("assisters", "assisters-empty", seasonLeaderboard(year, "assists"), "assists", { showApps: true, collapseAt: 6, moreId: "assisters-more" });
   fillTable("appearances", "appearances-empty", seasonLeaderboard(year, "apps"), "apps", { limit: 10 });
   matchLog(year);
 }
