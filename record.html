@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WBFC — Record a Game</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="favicon.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  .rec-field { margin-bottom: 18px; }
+  .rec-field label { display: block; color: var(--muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .rec-field input[type="text"], .rec-field input[type="url"], .rec-field input[type="date"], .rec textarea {
+    width: 100%; background: var(--bg-2); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 11px 14px; font-size: 0.95rem; outline: none; font-family: inherit;
+  }
+  .rec-field input:focus, .rec textarea:focus { border-color: var(--gold); }
+  .rec-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn {
+    background: var(--gold); color: #12161f; border: 0; border-radius: 10px;
+    padding: 11px 20px; font-size: 0.95rem; font-weight: 800; cursor: pointer;
+  }
+  .btn.ghost { background: var(--bg-2); color: var(--text); border: 1px solid var(--line); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .rec-msg { font-size: 0.9rem; margin-top: 10px; }
+  .rec-msg.err { color: var(--red); }
+  .rec-msg.ok { color: var(--green); }
+
+  .roster-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 6px; }
+  .roster-table th { text-align: left; color: var(--muted); font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; padding: 8px 8px; border-bottom: 1px solid var(--line); }
+  .roster-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .roster-table input[type="text"] { width: 100%; min-width: 120px; background: var(--bg-2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 7px 10px; font-size: 0.9rem; outline: none; }
+  .roster-table input[type="number"] { width: 56px; background: var(--bg-2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 7px 8px; font-size: 0.9rem; text-align: center; outline: none; }
+  .roster-table .raw { color: var(--muted); font-size: 0.8rem; }
+  .tag-pill { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; }
+  .tag-pill.squad { background: rgba(63,185,80,0.15); color: var(--green); }
+  .tag-pill.guest { background: rgba(151,160,192,0.15); color: var(--muted); }
+  .roster-table tr.excluded td { opacity: 0.4; }
+  .rec pre {
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px; overflow-x: auto; font-size: 0.85rem; color: var(--text);
+    white-space: pre; line-height: 1.5;
+  }
+  #step2, #step3 { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="logo.jpg" alt="WBFC logo" />
+  <h1>Record a Game</h1>
+  <p class="tag">Pull the roster from Sport Paddy, add goals &amp; assists, copy the result into <code>season-stats.js</code>.</p>
+  <nav class="nav">
+    <a href="index.html">Squad</a>
+    <a href="stats.html">Player Stats</a>
+  </nav>
+  <div class="divider"></div>
+</header>
+
+<main class="wrap rec">
+
+  <section id="step1">
+    <h2 class="section-title">1 · Load the roster</h2>
+    <p class="section-sub">Paste the Sport Paddy game link (the players page, or the game page — either works).</p>
+    <div class="rec-field">
+      <label for="gameUrl">Sport Paddy game URL</label>
+      <input type="url" id="gameUrl" placeholder="https://sportpaddy.com/game/…/players" autocomplete="off" />
+    </div>
+    <button class="btn" id="loadBtn">Load roster</button>
+    <p class="rec-msg" id="loadMsg"></p>
+
+    <details style="margin-top:18px">
+      <summary style="color:var(--muted);cursor:pointer;font-size:0.9rem">…or paste names manually</summary>
+      <div class="rec-field" style="margin-top:12px">
+        <label for="manualNames">One name per line (or comma-separated)</label>
+        <textarea id="manualNames" rows="5" placeholder="Valo&#10;Erinie&#10;Ismael"></textarea>
+      </div>
+      <button class="btn ghost" id="manualBtn">Use these names</button>
+    </details>
+  </section>
+
+  <section id="step2">
+    <h2 class="section-title">2 · The game</h2>
+    <div class="rec-row2">
+      <div class="rec-field"><label for="mdLabel">Label</label><input type="text" id="mdLabel" /></div>
+      <div class="rec-field"><label for="mdDate">Date</label><input type="date" id="mdDate" /></div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:26px">3 · Who played, goals &amp; assists</h2>
+    <p class="section-sub">Untick anyone who didn't actually play. Edit a name to match a FIFA card (e.g. a nickname). Names that don't match a card are carried as guests.</p>
+    <div class="table-scroll">
+      <table class="roster-table">
+        <thead>
+          <tr><th style="width:34px"></th><th>Player</th><th style="width:70px">Goals</th><th style="width:70px">Assists</th></tr>
+        </thead>
+        <tbody id="rosterBody"></tbody>
+      </table>
+    </div>
+    <button class="btn ghost" id="addRowBtn" style="margin-top:14px">+ Add someone not on the list</button>
+  </section>
+
+  <section id="step3">
+    <h2 class="section-title">4 · Copy into season-stats.js</h2>
+    <p class="section-sub">Paste this object as a new entry at the end of the current season's <code>matches</code> array.</p>
+    <button class="btn" id="genBtn">Generate</button>
+    <button class="btn ghost" id="copyBtn" style="margin-left:8px">Copy</button>
+    <p class="rec-msg" id="copyMsg"></p>
+    <pre id="output" style="margin-top:14px">// generate to preview</pre>
+  </section>
+
+</main>
+
+<footer>
+  WBFC · internal tool — not linked from the site.
+</footer>
+
+<script src="squad.js"></script>
+<script src="season-stats.js"></script>
+<script>
+const nameByLower = {};
+SQUAD.forEach(p => { nameByLower[p.name.toLowerCase()] = p.name; });
+
+const el = (id) => document.getElementById(id);
+const rosterBody = el("rosterBody");
+
+function resolve(raw) {
+  const hit = nameByLower[(raw || "").trim().toLowerCase()];
+  return { name: hit || (raw || "").trim(), squad: !!hit };
+}
+
+function rosterRow(rawName) {
+  const r = resolve(rawName);
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><input type="checkbox" class="inc" checked /></td>
+    <td>
+      <input type="text" class="pname" value="${r.name.replace(/"/g, "&quot;")}" />
+      ${rawName && rawName !== r.name ? `<div class="raw">Sport Paddy: ${rawName}</div>` : ""}
+      <span class="tag-pill ${r.squad ? "squad" : "guest"}">${r.squad ? "squad" : "guest"}</span>
+    </td>
+    <td><input type="number" class="g" min="0" value="0" /></td>
+    <td><input type="number" class="a" min="0" value="0" /></td>`;
+  const inc = tr.querySelector(".inc");
+  inc.addEventListener("change", () => tr.classList.toggle("excluded", !inc.checked));
+  const pname = tr.querySelector(".pname");
+  const pill = tr.querySelector(".tag-pill");
+  pname.addEventListener("input", () => {
+    const sq = !!nameByLower[pname.value.trim().toLowerCase()];
+    pill.className = "tag-pill " + (sq ? "squad" : "guest");
+    pill.textContent = sq ? "squad" : "guest";
+  });
+  return tr;
+}
+
+function loadRoster(names, meta) {
+  rosterBody.innerHTML = "";
+  names.forEach(n => rosterBody.appendChild(rosterRow(n)));
+  const nextMd = (SEASON_STATS.seasons[SEASON_STATS.currentSeason]?.matches.length || 0) + 1;
+  el("mdLabel").value = `Matchday ${nextMd}`;
+  el("mdDate").value = (meta && meta.date) || new Date().toISOString().slice(0, 10);
+  el("step2").style.display = "block";
+  el("step3").style.display = "block";
+  el("step3").scrollIntoView({ block: "nearest" });
+  el("step2").dataset.url = (meta && meta.url) || "";
+}
+
+el("loadBtn").addEventListener("click", async () => {
+  const url = el("gameUrl").value.trim();
+  const msg = el("loadMsg");
+  if (!url) { msg.className = "rec-msg err"; msg.textContent = "Paste a Sport Paddy URL first."; return; }
+  el("loadBtn").disabled = true;
+  msg.className = "rec-msg"; msg.textContent = "Loading…";
+  try {
+    const res = await fetch("/api/attendees?url=" + encodeURIComponent(url));
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Failed");
+    if (!data.players.length) throw new Error("No players found on that page.");
+    msg.className = "rec-msg ok";
+    msg.textContent = `Loaded ${data.players.length} attendees${data.date ? " · " + data.date : ""}.`;
+    loadRoster(data.players, { date: data.date, url });
+  } catch (e) {
+    msg.className = "rec-msg err";
+    msg.textContent = "Couldn't load automatically (" + e.message + "). Use the manual paste below.";
+  } finally {
+    el("loadBtn").disabled = false;
+  }
+});
+
+el("manualBtn").addEventListener("click", () => {
+  const raw = el("manualNames").value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+  if (!raw.length) return;
+  loadRoster(raw, { url: el("gameUrl").value.trim() });
+});
+
+el("addRowBtn").addEventListener("click", () => {
+  const tr = rosterRow("");
+  rosterBody.appendChild(tr);
+  tr.querySelector(".pname").focus();
+});
+
+el("genBtn").addEventListener("click", () => {
+  const played = [];
+  const goals = {};
+  const assists = {};
+  rosterBody.querySelectorAll("tr").forEach(tr => {
+    if (!tr.querySelector(".inc").checked) return;
+    const name = tr.querySelector(".pname").value.trim();
+    if (!name) return;
+    if (!played.includes(name)) played.push(name);
+    const g = parseInt(tr.querySelector(".g").value, 10) || 0;
+    const a = parseInt(tr.querySelector(".a").value, 10) || 0;
+    if (g > 0) goals[name] = (goals[name] || 0) + g;
+    if (a > 0) assists[name] = (assists[name] || 0) + a;
+  });
+  const q = (s) => JSON.stringify(s);
+  const obj = (m) => "{ " + Object.entries(m).map(([k, v]) => `${q(k)}: ${v}`).join(", ") + " }";
+  const url = el("step2").dataset.url;
+  const lines = [
+    "        {",
+    `          date: ${q(el("mdDate").value)},`,
+    `          label: ${q(el("mdLabel").value)},`,
+    url ? `          sportpaddy: ${q(url)},` : null,
+    `          played: [${played.map(q).join(", ")}],`,
+    `          goals:   ${Object.keys(goals).length ? obj(goals) : "{}"},`,
+    `          assists: ${Object.keys(assists).length ? obj(assists) : "{}"},`,
+    "        },",
+  ].filter(Boolean);
+  el("output").textContent = lines.join("\n");
+});
+
+el("copyBtn").addEventListener("click", async () => {
+  const text = el("output").textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    el("copyMsg").className = "rec-msg ok";
+    el("copyMsg").textContent = "Copied.";
+  } catch {
+    el("copyMsg").className = "rec-msg err";
+    el("copyMsg").textContent = "Couldn't copy — select the text manually.";
+  }
+});
+</script>
+
+</body>
+</html>

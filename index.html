@@ -157,6 +157,7 @@
   Card ratings are for fun and bragging rights only.
 </footer>
 
+<script src="squad.js"></script>
 <script src="season-stats.js"></script>
 <script>
 // Custom-drawn attribute icons (original SVGs — not game assets).
@@ -190,90 +191,7 @@ function trendHTML(p) {
   return `<span class="trend ${t}" title="${TREND_LABEL[t]}" role="img" aria-label="${TREND_LABEL[t]}">${TREND_SVG[t]}${delta}</span>`;
 }
 
-const players = [
-  { name: "Valo", file: "Valo.png", ovr: 87, pos: "ST", alt: ["CAM","LW","RW"], foot: "Right", trend: "up", delta: 1,
-    pac:86, sho:91, pas:83, dri:90, def:83, phy:85,
-    blurb: "The talisman. Elite finishing and dribbling with the pace to run in behind — the first name on the teamsheet.",
-    about: "Arguably our best footballer and a genuine game-decider — Valo can win a match on his own. He can play up front, in midfield or out wide, and his shooting and dribbling are top-drawer.",
-    chem: "Best with Hunter or Sniper to push that shooting past 95." },
-  { name: "Ismael", file: "Ismael.png", ovr: 83, pos: "CM", alt: ["CAM","CDM"], foot: "Right", trend: "up", delta: 1,
-    pac:75, sho:73, pas:91, dri:87, def:83, phy:86,
-    blurb: "The engine room. Dictates tempo with 91 passing and glides past pressure — box-to-box with real physicality.",
-    about: "A maestro in midfield. A very smart player who reads and understands the game brilliantly, and an excellent passer of the ball.",
-    chem: "Engine or Maestro to round out the pace and keep the passing elite." },
-  { name: "Bouncey", file: "Bouncey.png", ovr: 81, pos: "CB", alt: ["CDM","CM"], foot: "Right", trend: "up", delta: 1,
-    pac:78, sho:72, pas:84, dri:82, def:86, phy:83,
-    blurb: "A ball-playing centre-half. Comfortable stepping into midfield, quick across the ground and clean on the ball.",
-    about: "A hugely versatile footballer who's superb with the ball at his feet. A rock in defence who can equally step into midfield and control the tempo of a game — an all-round committed, physical operator.",
-    chem: "Shadow for a lockdown defender, or Backbone to keep the passing." },
-  { name: "Paulo", file: "Paulo.png", ovr: 81, pos: "CB", alt: ["CDM"], foot: "Right", trend: "up", delta: 1,
-    pac:69, sho:75, pas:83, dri:84, def:87, phy:85,
-    blurb: "The wall. 87 defending and 85 physical — wins everything in the air and in the tackle. The leader at the back.",
-    about: "One of our most rugged centre backs, and outstanding with the ball at his feet. Reads the game well and can pick out pinpoint 20-yard passes.",
-    chem: "Anchor or Shadow to fix the pace and make him untouchable 1v1." },
-  { name: "Khell Magic", file: "Khell-Magic.png", ovr: 78, pos: "LW", alt: ["RW"], foot: "Right", trend: "up", delta: 1,
-    pac:73, sho:80, pas:82, dri:85, def:65, phy:80,
-    blurb: "The creator out wide. 85 dribbling and 82 passing — cuts inside on either flank and picks the final ball.",
-    about: "A silky, modern-day winger. He may not have blistering pace, but his close control, his knack for creating space to shoot, and his ability to take players on and beat them set him apart as one of WBFC's elite wingers.",
-    chem: "Engine or Hawk to lift the pace and add a goal threat." },
-  { name: "Adams", file: "Adams.png", ovr: 77, pos: "CDM", alt: [], foot: "Right", trend: "up", delta: 1,
-    pac:72, sho:70, pas:75, dri:77, def:84, phy:86,
-    blurb: "The screen in front of the back four. 86 physical, 84 defending — breaks play up and keeps it simple.",
-    about: "A relentlessly physical presence and a workaholic in midfield — nothing gets past him without his say-so.",
-    chem: "Anchor or Shadow — protect the defence and add the missing pace." },
-  { name: "Beks", file: "Beks.png", ovr: 77, pos: "RB", alt: ["LB","CB"], foot: "Right", trend: "up", delta: 1,
-    pac:72, sho:70, pas:85, dri:70, def:82, phy:83,
-    blurb: "An overlapping full-back with 85 passing. Solid defensively and can play either side or tuck in at centre-back.",
-    about: "One of the mainstays. Beyond his committed defending, he's an excellent passer who can hit pinpoint long-range balls. A right back by trade who can also fill in at left back or centre back.",
-    chem: "Shadow for the pure defender, or Engine to weaponise the crossing." },
-  { name: "Fabulous Joe", file: "Fabulous-Joe.png", ovr: 77, pos: "RW", alt: ["LW"], foot: "Right", trend: "up", delta: 1,
-    pac:90, sho:72, pas:75, dri:82, def:70, phy:72,
-    blurb: "Raw speed. 90 pace off either wing — get him in behind and let him run at defenders all game.",
-    about: "The flash of the team. A lightning-quick winger comfortable on either flank, brilliant at dribbling and beating players for pace — and a genuine team player with it.",
-    chem: "Hunter or Hawk to turn the pace into end product." },
-  { name: "Daniel", file: "Daniel.png", ovr: 78, pos: "LW", alt: ["RW"], foot: "Right", trend: "up", delta: 1,
-    pac:80, sho:83, pas:79, dri:75, def:72, phy:79,
-    blurb: "A quick, direct winger with a real goal threat — 83 shooting and 80 pace off either flank.",
-    about: "A pacey wide forward comfortable on the left or the right. Gets his shots away early, runs the channels all game, and brings genuine end product from wide areas.",
-    chem: "Hunter or Hawk to turn the pace and shooting into goals." },
-  { name: "Fahad", file: "Fahad.png", ovr: 75, pos: "ST", alt: ["CAM"], foot: "Right", trend: "up", delta: 1,
-    pac:75, sho:78, pas:76, dri:75, def:71, phy:74,
-    blurb: "A tidy, well-rounded forward — no obvious weakness, and comfortable dropping into the number ten role.",
-    about: "A smart striker who links play and finishes his chances. Equally happy leading the line or playing just behind it as a CAM, and never gives the ball away cheaply.",
-    chem: "Hunter or Sniper to sharpen the finishing." },
-  { name: "Global K", file: "Global-K.png", ovr: 78, pos: "CDM", alt: ["CM"], foot: "Left", trend: "up", delta: 1,
-    pac:73, sho:75, pas:79, dri:78, def:84, phy:82,
-    blurb: "A dominant holding midfielder. 84 defending and 82 physical — screens the back four and keeps the ball moving.",
-    about: "A left-footed anchor in midfield who breaks up play and starts attacks. Strong in the tackle, tidy in possession, and comfortable stepping forward into a box-to-box role.",
-    chem: "Anchor or Shadow to add the pace and lock down the middle." },
-  { name: "Isaac", file: "Isaac.png", ovr: 74, pos: "LW", alt: ["RW"], foot: "Right", trend: "up", delta: 1,
-    pac:76, sho:80, pas:75, dri:77, def:70, phy:65,
-    blurb: "A direct wide forward with a shot on him — 80 shooting and a willingness to attack the back post.",
-    about: "A talented left winger who can also switch to the right. Dangerous in front of goal with well-placed shots, and very strong with his right foot.",
-    chem: "Hunter or Finisher to make the most of that shooting." },
-  { name: "Erinie", file: "Erinie.png", ovr: 76, pos: "ST", alt: [], foot: "Left", trend: "up", delta: 1,
-    pac:76, sho:80, pas:77, dri:79, def:65, phy:76,
-    blurb: "A left-footed number nine. 80 shooting, sharp movement in the box and strong enough to lead the line.",
-    about: "A natural finisher through the middle. Left-footed, lives on the shoulder of the last defender, and drops in to link play. Opened the 2026 season with a four-goal haul.",
-    chem: "Hunter or Finisher — lean straight into the finishing." },
-  { name: "Erons", file: "Erons.png", ovr: 71, pos: "RB", alt: ["LB","CB"], foot: "Right", trend: "up", delta: 1,
-    pac:71, sho:65, pas:72, dri:70, def:75, phy:72,
-    blurb: "A dependable, versatile defender — right back by trade who can cover the whole back line.",
-    about: "A reliable full-back who keeps things simple and positions himself well. Happy at right back, left back or centre back, and never shirks the defensive work.",
-    chem: "Shadow or Anchor to sharpen the defending and add a yard of pace." },
-  { name: "El Smith", file: "El-Smith.png", ovr: 76, pos: "CB", alt: ["CDM"], foot: "Right", trend: "up", delta: 1,
-    pac:64, sho:75, pas:80, dri:70, def:85, phy:83,
-    blurb: "Old-school centre-half. 85 defending and 83 physical — reads the game, wins his duels, distributes tidily.",
-    about: "A very tough centre back to play against. His defensive ability, awareness and physicality let him neutralise modern strikers. He might not be the quickest, but he leads and organises the backline superbly.",
-    chem: "Shadow or Anchor — the pace boost is essential here." },
-  { name: "Feleb", file: "Feleb.png", ovr: 80, pos: "GK", alt: ["CB"], foot: "Right", trend: "up", delta: 1,
-    gk: { div:86, han:75, kic:78, ref:88, spd:70, pos:83 },
-    blurb: "The last line. 88 reflexes and 86 diving — commands his box and pulls off the big saves.",
-    about: "A commanding goalkeeper with lightning reflexes and strong shot-stopping. Reads crosses well, distributes tidily, and at a push can even fill in at centre back.",
-    chem: "Glove or Cat to sharpen the reflexes and handling." },
-];
-
-players.sort((a, b) => a.name.localeCompare(b.name));
+const players = SQUAD.slice().sort((a, b) => a.name.localeCompare(b.name));
 
 // Rating-trend feature is parked — hide its explainer card until SHOW_TREND is on.
 if (!SHOW_TREND) document.getElementById("trend-explain")?.remove();
