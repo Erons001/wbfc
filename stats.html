@@ -118,7 +118,7 @@ function fillTable(bodyId, emptyId, rows, statKey) {
   const empty = document.getElementById(emptyId);
   body.innerHTML = rows.map((r, i) => `
     <tr class="${i === 0 ? "leader" : ""}">
-      <td class="rank">${i + 1}</td>
+      <td class="rank">${i === 0 ? '<span class="medal" title="Leads the race" aria-label="1st">🥇</span>' : i + 1}</td>
       <td class="player">${r.name}</td>
       <td class="num big">${r[statKey]}</td>
     </tr>`).join("");

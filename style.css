@@ -277,6 +277,7 @@ p.section-sub {
 .league-table tr:last-child td { border-bottom: 0; }
 .league-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
 .league-table .rank { color: var(--muted); width: 46px; text-align: center; font-variant-numeric: tabular-nums; }
+.league-table .medal { font-size: 1.1rem; line-height: 1; }
 .league-table .player { font-weight: 700; }
 .league-table th.num, .league-table td.num { text-align: right; width: 90px; font-variant-numeric: tabular-nums; }
 .league-table td.big { font-weight: 800; color: var(--gold); font-size: 1.1rem; }
