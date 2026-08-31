@@ -27,12 +27,13 @@ const SEASON_STATS = {
           date: "2026-08-30",
           label: "Matchday 1",
           sportpaddy: "https://sportpaddy.com/game/sunday-evening-sets-2026-08-30/players",
-          // Backfilled from the Sport Paddy roster; a few regulars turned up under
-          // nicknames, so this list is best-effort for the first game.
+          // From the Sport Paddy roster (18 attended). Regulars who turned up under
+          // nicknames are mapped here: Joga = Bouncey, KM10 = Khell Magic,
+          // Tinubu = Valo, ISMA'EL HOES = Ismael.
           played: [
             "Valo", "Isaac", "Khell Magic",
             "Erinie", "Erons", "Paulo", "Bouncey", "Ismael", "Global K", "Starman",
-            "Comet", "LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi", "Tinubu",
+            "Comet", "LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
             "Majeed", "Nur", "GRAND",
           ],
           goals:   { "Valo": 6, "Erinie": 4, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
