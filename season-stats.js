@@ -37,7 +37,7 @@ const SEASON_STATS = {
             "Majeed", "Nur", "GRAND",
           ],
           goals:   { "Valo": 6, "Erinie": 4, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
-          assists: { "Starman": 2, "Erinie": 1, "Ismael": 1, "Global K": 1 },
+          assists: { "Starman": 2, "Bouncey": 2, "Erinie": 1, "Ismael": 1, "Global K": 1 },
         },
       ],
     },
