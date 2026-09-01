@@ -178,20 +178,32 @@ function matchLog(year) {
   };
   wrap.innerHTML = matches.map(m => {
     const roster = (m.played || []).slice().sort((a, b) => a.localeCompare(b));
+    const gTotal = Object.values(m.goals || {}).reduce((s, n) => s + n, 0);
+    const aTotal = Object.values(m.assists || {}).reduce((s, n) => s + n, 0);
     return `
     <div class="match">
-      <div class="head">
+      <button class="head" type="button" aria-expanded="false">
         <span class="md">${m.label}</span>
         <span class="date">${fmtDate(m.date)}</span>
-        ${roster.length ? `<span class="date">· ${roster.length} played</span>` : ""}
+        <span class="head-meta">${roster.length ? roster.length + " played · " : ""}${gTotal}G · ${aTotal}A</span>
+        <span class="chevron" aria-hidden="true">▾</span>
+      </button>
+      <div class="match-body">
+        <div class="cols">
+          ${col("Goals", m.goals)}
+          ${col("Assists", m.assists)}
+        </div>
+        ${roster.length ? `<div class="roster"><h5>Played</h5><span>${roster.join(", ")}</span></div>` : ""}
       </div>
-      <div class="cols">
-        ${col("Goals", m.goals)}
-        ${col("Assists", m.assists)}
-      </div>
-      ${roster.length ? `<div class="roster"><h5>Played</h5><span>${roster.join(", ")}</span></div>` : ""}
     </div>`;
   }).join("");
+
+  wrap.querySelectorAll(".match .head").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const open = btn.parentElement.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
 }
 
 function render() {

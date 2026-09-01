@@ -267,13 +267,20 @@ p.section-sub {
 .expand-btn:hover { text-decoration: underline; }
 
 /* Match log */
-.match { border: 1px solid var(--line); border-radius: 14px; padding: 0; margin-bottom: 16px; background: var(--panel); overflow: hidden; }
+.match { border: 1px solid var(--line); border-radius: 14px; padding: 0; margin-bottom: 12px; background: var(--panel); overflow: hidden; }
 .match .head {
-  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
-  padding: 14px 18px; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  width: 100%; padding: 14px 18px; border: 0; background: none;
+  color: var(--text); font: inherit; text-align: left; cursor: pointer;
 }
+.match .head:hover { background: rgba(255,255,255,0.02); }
+.match.open .head { border-bottom: 1px solid var(--line); }
 .match .md { font-weight: 800; font-size: 1rem; }
 .match .date { color: var(--muted); font-size: 0.85rem; }
+.match .head-meta { color: var(--muted); font-size: 0.82rem; margin-left: auto; }
+.match .chevron { color: var(--muted); font-size: 0.8rem; transition: transform 0.18s ease; }
+.match.open .chevron { transform: rotate(180deg); }
+.match:not(.open) .match-body { display: none; }
 .match .cols { display: grid; grid-template-columns: 1fr 1fr; }
 .match .col { padding: 14px 18px; }
 .match .col + .col { border-left: 1px solid var(--line); }
