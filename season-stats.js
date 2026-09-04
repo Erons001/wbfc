@@ -36,7 +36,7 @@ const SEASON_STATS = {
             "Comet", "LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
             "Majeed", "Nur", "GRAND",
           ],
-          goals:   { "Valo": 6, "Erinie": 3, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
+          goals:   { "Valo": 5, "Erinie": 3, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
           assists: { "Starman": 2, "Bouncey": 2, "Erinie": 1, "Ismael": 1, "Global K": 1 },
         },
       ],
