@@ -176,7 +176,8 @@ p.section-sub {
 .stat .v { font-size: 1.3rem; font-weight: 800; }
 
 /* Season appearances/goals/assists block in the card modal */
-.season-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.season-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.season-row .stat { flex: 1 1 22%; min-width: 72px; }
 .season-row .stat .v { color: var(--gold); }
 
 .kv { font-size: 0.9rem; margin-bottom: 8px; }

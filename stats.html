@@ -70,6 +70,25 @@
       <p class="empty-note" id="assisters-empty" hidden>No assists recorded yet this season.</p>
     </div>
 
+    <div class="table-card" id="cs-card" hidden>
+      <h3><span class="dot"></span>Most Clean Sheets</h3>
+      <div class="table-scroll">
+        <table class="league-table">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Player</th>
+              <th class="num">Apps</th>
+              <th class="num">CS</th>
+            </tr>
+          </thead>
+          <tbody id="cleansheets"></tbody>
+        </table>
+      </div>
+      <div class="table-more" id="cleansheets-more" hidden></div>
+      <p class="empty-note" id="cleansheets-empty" hidden>No clean sheets recorded yet this season.</p>
+    </div>
+
     <div class="table-card">
       <h3><span class="dot"></span>Most Appearances</h3>
       <div class="table-scroll">
@@ -178,21 +197,20 @@ function matchLog(year) {
   };
   wrap.innerHTML = matches.map(m => {
     const roster = (m.played || []).slice().sort((a, b) => a.localeCompare(b));
-    const gTotal = Object.values(m.goals || {}).reduce((s, n) => s + n, 0);
-    const aTotal = Object.values(m.assists || {}).reduce((s, n) => s + n, 0);
+    const total = (map) => Object.values(map || {}).reduce((s, n) => s + n, 0);
+    const gTotal = total(m.goals), aTotal = total(m.assists), csTotal = total(m.cleanSheets);
+    const cols = [col("Goals", m.goals), col("Assists", m.assists)];
+    if (csTotal) cols.push(col("Clean sheets", m.cleanSheets));
     return `
     <div class="match">
       <button class="head" type="button" aria-expanded="false">
         <span class="md">${m.label}</span>
         <span class="date">${fmtDate(m.date)}</span>
-        <span class="head-meta">${roster.length ? roster.length + " played · " : ""}${gTotal}G · ${aTotal}A</span>
+        <span class="head-meta">${roster.length ? roster.length + " played · " : ""}${gTotal}G · ${aTotal}A${csTotal ? ` · ${csTotal}CS` : ""}</span>
         <span class="chevron" aria-hidden="true">▾</span>
       </button>
       <div class="match-body">
-        <div class="cols">
-          ${col("Goals", m.goals)}
-          ${col("Assists", m.assists)}
-        </div>
+        <div class="cols" style="grid-template-columns:repeat(${cols.length},1fr)">${cols.join("")}</div>
         ${roster.length ? `<div class="roster"><h5>Played</h5><span>${roster.join(", ")}</span></div>` : ""}
       </div>
     </div>`;
@@ -211,9 +229,13 @@ function render() {
   const meta = seasonMeta(year);
   document.getElementById("summary").innerHTML =
     `<b>${year}</b> · ${meta.matches} ${meta.matches === 1 ? "matchday" : "matchdays"} played · ` +
-    `<b>${meta.players}</b> players · <b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists`;
+    `<b>${meta.players}</b> players · <b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists` +
+    (meta.cleanSheets ? ` · <b>${meta.cleanSheets}</b> clean sheets` : "");
   fillTable("scorers", "scorers-empty", seasonLeaderboard(year, "goals"), "goals", { showApps: true, collapseAt: 6, moreId: "scorers-more" });
   fillTable("assisters", "assisters-empty", seasonLeaderboard(year, "assists"), "assists", { showApps: true, collapseAt: 6, moreId: "assisters-more" });
+  const csRows = seasonLeaderboard(year, "cleanSheets");
+  document.getElementById("cs-card").hidden = csRows.length === 0;
+  fillTable("cleansheets", "cleansheets-empty", csRows, "cleanSheets", { showApps: true, collapseAt: 6, moreId: "cleansheets-more" });
   fillTable("appearances", "appearances-empty", seasonLeaderboard(year, "apps"), "apps", { limit: 10 });
   matchLog(year);
 }

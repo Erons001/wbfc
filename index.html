@@ -250,10 +250,14 @@ function openModal(i) {
   const season = SEASON_STATS.currentSeason;
   const t = seasonTotals(p.name, season);
   document.getElementById("m-season-title").textContent = `${season} Season`;
-  document.getElementById("m-season").innerHTML =
-    `<div class="stat"><div class="k">APPS</div><div class="v">${t.apps}</div></div>
-     <div class="stat"><div class="k">GOALS</div><div class="v">${t.goals}</div></div>
-     <div class="stat"><div class="k">ASSISTS</div><div class="v">${t.assists}</div></div>`;
+  const seasonTiles = [
+    ["APPS", t.apps],
+    ["GOALS", t.goals],
+    ["ASSISTS", t.assists],
+  ];
+  if (t.cleanSheets > 0) seasonTiles.push(["CLEAN SHEETS", t.cleanSheets]);
+  document.getElementById("m-season").innerHTML = seasonTiles.map(([k, v]) =>
+    `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
 
   document.getElementById("m-alt").innerHTML = p.alt.length
     ? `<b>Alternate positions:</b> ${p.alt.join(", ")}`

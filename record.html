@@ -88,12 +88,12 @@
       <div class="rec-field"><label for="mdDate">Date</label><input type="date" id="mdDate" /></div>
     </div>
 
-    <h2 class="section-title" style="margin-top:26px">3 · Who played, goals &amp; assists</h2>
-    <p class="section-sub">Untick anyone who didn't actually play. Edit a name to match a FIFA card (e.g. a nickname). Names that don't match a card are carried as guests.</p>
+    <h2 class="section-title" style="margin-top:26px">3 · Who played, goals, assists &amp; clean sheets</h2>
+    <p class="section-sub">Untick anyone who didn't actually play. Edit a name to match a FIFA card (e.g. a nickname). Names that don't match a card are carried as guests. CS = clean sheet (defender / keeper who kept a set out).</p>
     <div class="table-scroll">
       <table class="roster-table">
         <thead>
-          <tr><th style="width:34px"></th><th>Player</th><th style="width:70px">Goals</th><th style="width:70px">Assists</th></tr>
+          <tr><th style="width:34px"></th><th>Player</th><th style="width:64px">Goals</th><th style="width:64px">Assists</th><th style="width:64px">CS</th></tr>
         </thead>
         <tbody id="rosterBody"></tbody>
       </table>
@@ -141,7 +141,8 @@ function rosterRow(rawName) {
       <span class="tag-pill ${r.squad ? "squad" : "guest"}">${r.squad ? "squad" : "guest"}</span>
     </td>
     <td><input type="number" class="g" min="0" value="0" /></td>
-    <td><input type="number" class="a" min="0" value="0" /></td>`;
+    <td><input type="number" class="a" min="0" value="0" /></td>
+    <td><input type="number" class="cs" min="0" max="1" value="0" /></td>`;
   const inc = tr.querySelector(".inc");
   inc.addEventListener("change", () => tr.classList.toggle("excluded", !inc.checked));
   const pname = tr.querySelector(".pname");
@@ -204,6 +205,7 @@ el("genBtn").addEventListener("click", () => {
   const played = [];
   const goals = {};
   const assists = {};
+  const cleanSheets = {};
   rosterBody.querySelectorAll("tr").forEach(tr => {
     if (!tr.querySelector(".inc").checked) return;
     const name = tr.querySelector(".pname").value.trim();
@@ -211,8 +213,10 @@ el("genBtn").addEventListener("click", () => {
     if (!played.includes(name)) played.push(name);
     const g = parseInt(tr.querySelector(".g").value, 10) || 0;
     const a = parseInt(tr.querySelector(".a").value, 10) || 0;
+    const cs = parseInt(tr.querySelector(".cs").value, 10) || 0;
     if (g > 0) goals[name] = (goals[name] || 0) + g;
     if (a > 0) assists[name] = (assists[name] || 0) + a;
+    if (cs > 0) cleanSheets[name] = (cleanSheets[name] || 0) + cs;
   });
   const q = (s) => JSON.stringify(s);
   const obj = (m) => "{ " + Object.entries(m).map(([k, v]) => `${q(k)}: ${v}`).join(", ") + " }";
@@ -223,8 +227,9 @@ el("genBtn").addEventListener("click", () => {
     `          label: ${q(el("mdLabel").value)},`,
     url ? `          sportpaddy: ${q(url)},` : null,
     `          played: [${played.map(q).join(", ")}],`,
-    `          goals:   ${Object.keys(goals).length ? obj(goals) : "{}"},`,
-    `          assists: ${Object.keys(assists).length ? obj(assists) : "{}"},`,
+    `          goals:       ${Object.keys(goals).length ? obj(goals) : "{}"},`,
+    `          assists:     ${Object.keys(assists).length ? obj(assists) : "{}"},`,
+    `          cleanSheets: ${Object.keys(cleanSheets).length ? obj(cleanSheets) : "{}"},`,
     "        },",
   ].filter(Boolean);
   el("output").textContent = lines.join("\n");
