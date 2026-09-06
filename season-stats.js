@@ -1,20 +1,21 @@
-/* WBFC goal, assist & appearance records.
+/* WBFC goal, assist, clean-sheet & appearance records.
  *
  * After each game, add ONE object to the relevant season's `matches` array:
  *   {
  *     date: "YYYY-MM-DD",
  *     label: "Matchday N",
  *     sportpaddy: "https://sportpaddy.com/game/<slug>/players",   // optional, for reference
- *     played:  ["Name", "Name", ...],          // the attendee roster (canonical names)
- *     goals:   { "Name": <count>, ... },
- *     assists: { "Name": <count>, ... },
+ *     played:      ["Name", "Name", ...],       // the attendee roster (canonical names)
+ *     goals:       { "Name": <count>, ... },
+ *     assists:     { "Name": <count>, ... },
+ *     cleanSheets: { "Name": <count>, ... },    // sets kept out (defenders / keepers)
  *   }
  *
  * Use the record.html helper to build this object from a Sport Paddy game URL.
  * Names should match the FIFA card names in index.html; anyone without a card is
  * carried as a guest (shows in the stats tables, not the squad).
- * Anyone who scored or assisted is counted as an appearance even if missing
- * from `played`.
+ * Anyone who scored, assisted or kept a clean sheet counts as an appearance even
+ * if missing from `played`.
  *
  * New year: add another key under `seasons` and bump `currentSeason`.
  */
@@ -36,59 +37,72 @@ const SEASON_STATS = {
             "Comet", "LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
             "Majeed", "Nur", "GRAND",
           ],
-          goals:   { "Valo": 5, "Erinie": 3, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
-          assists: { "Starman": 2, "Bouncey": 2, "Erinie": 1, "Ismael": 1, "Global K": 1 },
+          goals:       { "Valo": 5, "Erinie": 3, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
+          assists:     { "Starman": 2, "Bouncey": 2, "Erinie": 1, "Ismael": 1, "Global K": 1 },
+          cleanSheets: {},
+        },
+        {
+          date: "2026-09-06",
+          label: "Matchday 2",
+          sportpaddy: "https://sportpaddy.com/game/3-hours-of-fun-football-2026-09-06/players",
+          played: [
+            "Erons", "Khell Magic", "Erinie", "Dornu", "Hanafi", "Ghidorah", "Valo", "Ismael",
+            "Majid", "Bouncey", "Isaac", "Sanz", "Pelumi", "Paulo", "Michael", "Fahad",
+            "Simaye", "Ojoche", "Angel", "Pizma", "Flo", "Beks", "GRAND", "Adams", "Global K",
+            "Abdulrasaq zulqornain", "Feleb", "Starman",
+          ],
+          goals:       { "Erons": 2, "Erinie": 3, "Hanafi": 2, "Valo": 3, "Ismael": 2, "Bouncey": 2, "Isaac": 1, "Paulo": 1, "Fahad": 1, "Angel": 1, "Pizma": 4, "Beks": 1 },
+          assists:     { "Erinie": 1, "Ghidorah": 2, "Valo": 2, "Ismael": 3, "Bouncey": 1, "Sanz": 1, "Paulo": 2, "Pizma": 1, "Flo": 2, "Adams": 1 },
+          cleanSheets: {},
         },
       ],
     },
   },
 };
 
+const STAT_KEYS = ["goals", "assists", "cleanSheets"];
+
 function _season(year) {
   return SEASON_STATS.seasons[year || SEASON_STATS.currentSeason];
 }
 
-/* Did a player feature in a match? (on the roster, or scored / assisted) */
+/* Did a player feature in a match? (on the roster, or recorded any stat) */
 function playedInMatch(m, name) {
   if (m.played && m.played.includes(name)) return true;
-  if (m.goals && m.goals[name]) return true;
-  if (m.assists && m.assists[name]) return true;
-  return false;
+  return STAT_KEYS.some((k) => m[k] && m[k][name]);
 }
 
-/* Appearances + goals + assists for one player in a season. */
+/* Appearances + goals + assists + clean sheets for one player in a season. */
 function seasonTotals(playerName, year) {
   const season = _season(year);
-  let apps = 0, goals = 0, assists = 0;
+  const t = { apps: 0, goals: 0, assists: 0, cleanSheets: 0 };
   if (season) {
     for (const m of season.matches) {
-      if (playedInMatch(m, playerName)) apps++;
-      goals += (m.goals && m.goals[playerName]) || 0;
-      assists += (m.assists && m.assists[playerName]) || 0;
+      if (playedInMatch(m, playerName)) t.apps++;
+      for (const k of STAT_KEYS) t[k] += (m[k] && m[k][playerName]) || 0;
     }
   }
-  return { apps, goals, assists };
+  return t;
 }
 
 /* Ranked leaderboard for a season.
- * sortKey: "goals" (default), "assists" or "apps".
- * For goals/assists, only players with at least one are included. */
+ * sortKey: "goals" (default), "assists", "cleanSheets" or "apps".
+ * For a stat key, only players with at least one are included. */
 function seasonLeaderboard(year, sortKey) {
   sortKey = sortKey || "goals";
   const season = _season(year);
   const tally = {};
-  const row = (name) => (tally[name] = tally[name] || { name, apps: 0, goals: 0, assists: 0 });
+  const row = (name) =>
+    (tally[name] = tally[name] || { name, apps: 0, goals: 0, assists: 0, cleanSheets: 0 });
   if (season) {
     const everyone = new Set();
     for (const m of season.matches) {
       (m.played || []).forEach((n) => everyone.add(n));
-      for (const n in (m.goals || {})) everyone.add(n);
-      for (const n in (m.assists || {})) everyone.add(n);
+      for (const k of STAT_KEYS) for (const n in (m[k] || {})) everyone.add(n);
     }
     for (const m of season.matches) {
       for (const n of everyone) if (playedInMatch(m, n)) row(n).apps++;
-      for (const n in (m.goals || {})) row(n).goals += m.goals[n];
-      for (const n in (m.assists || {})) row(n).assists += m.assists[n];
+      for (const k of STAT_KEYS) for (const n in (m[k] || {})) row(n)[k] += m[k][n];
     }
   }
   return Object.values(tally)
@@ -105,13 +119,14 @@ function seasonLeaderboard(year, sortKey) {
 /* Season-wide totals. */
 function seasonMeta(year) {
   const season = _season(year);
-  if (!season) return { goals: 0, assists: 0, matches: 0, players: 0 };
-  let goals = 0, assists = 0;
+  if (!season) return { goals: 0, assists: 0, cleanSheets: 0, matches: 0, players: 0 };
+  const totals = { goals: 0, assists: 0, cleanSheets: 0 };
   const players = new Set();
   for (const m of season.matches) {
     (m.played || []).forEach((n) => players.add(n));
-    for (const n in (m.goals || {})) { goals += m.goals[n]; players.add(n); }
-    for (const n in (m.assists || {})) { assists += m.assists[n]; players.add(n); }
+    for (const k of STAT_KEYS) {
+      for (const n in (m[k] || {})) { totals[k] += m[k][n]; players.add(n); }
+    }
   }
-  return { goals, assists, matches: season.matches.length, players: players.size };
+  return { ...totals, matches: season.matches.length, players: players.size };
 }
