@@ -33,7 +33,7 @@ const SEASON_STATS = {
           // Tinubu = Valo, ISMA'EL HOES = Ismael.
           played: [
             "Valo", "Isaac", "Khell Magic",
-            "Erinie", "Erons", "Paulo", "Bouncey", "Ismael", "Global K", "Starman",
+            "Erinie", "Erons", "Paulo", "Bouncey", "Ismael", "Global K", "Starman", "Beks",
             "Comet", "Joseph LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
             "Majeed", "Nur", "Grand",
           ],
