@@ -101,4 +101,9 @@ const SQUAD = [
     blurb: "A quick, athletic full-back. 80 pace and 82 physical — gets up and down the flank all game.",
     about: "An athletic, attack-minded full-back who bombs forward and gets back just as fast. Comfortable on either side, and physically imposing for opposing wingers.",
     chem: "Shadow or Engine to round out his all-round game." },
+  { name: "Grand", file: "Grand.png", ovr: 76, pos: "LM", alt: ["LW"], foot: "Right", trend: "up", delta: 1,
+    pac:73, sho:71, pas:74, dri:70, def:82, phy:83,
+    blurb: "A hard-working left midfielder. 82 defending and 83 physical for a wide player — tracks back and wins his battles.",
+    about: "A two-way left-sided midfielder who puts defensive work in as readily as he gets forward. Physically strong for the position, and equally comfortable pushed further up as a winger.",
+    chem: "Shadow or Anchor to sharpen the defending, or Engine to add pace going forward." },
 ];

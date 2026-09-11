@@ -34,8 +34,8 @@ const SEASON_STATS = {
           played: [
             "Valo", "Isaac", "Khell Magic",
             "Erinie", "Erons", "Paulo", "Bouncey", "Ismael", "Global K", "Starman",
-            "Comet", "LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
-            "Majeed", "Nur", "GRAND",
+            "Comet", "Joseph LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
+            "Majeed", "Nur", "Grand",
           ],
           goals:       { "Valo": 5, "Erinie": 3, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
           assists:     { "Starman": 2, "Bouncey": 2, "Erinie": 1, "Ismael": 1, "Global K": 1 },
@@ -48,12 +48,13 @@ const SEASON_STATS = {
           played: [
             "Erons", "Khell Magic", "Erinie", "Dornu", "Hanafi", "Ghidorah", "Valo", "Ismael",
             "Majid", "Bouncey", "Isaac", "Sanz", "Pelumi", "Paulo", "Michael", "Fahad",
-            "Simaye", "Ojoche", "Angel", "Pizma", "Flo", "Beks", "GRAND", "Adams", "Global K",
-            "Abdulrasaq zulqornain", "Feleb", "Starman", "Gomene",
+            "Simaye", "Ojoche", "Angel", "Pizma", "Flo", "Beks", "Grand", "Adams", "Global K",
+            "Abdulrasaq zulqornain", "Feleb", "Starman",
           ],
           goals:       { "Erons": 2, "Erinie": 3, "Hanafi": 2, "Valo": 3, "Ismael": 2, "Bouncey": 2, "Isaac": 1, "Paulo": 1, "Fahad": 1, "Angel": 1, "Pizma": 4, "Beks": 1 },
           assists:     { "Erinie": 1, "Ghidorah": 2, "Valo": 2, "Ismael": 3, "Bouncey": 1, "Sanz": 1, "Paulo": 2, "Pizma": 1, "Flo": 2, "Adams": 1 },
-          cleanSheets: { "Gomene": 5, "Paulo": 4, "Erons": 3 },
+          // Gomene = Beks (same player, different Sport Paddy handle).
+          cleanSheets: { "Beks": 5, "Paulo": 4, "Erons": 3 },
         },
       ],
     },
