@@ -56,6 +56,19 @@ const SEASON_STATS = {
           // Gomene = Beks (same player, different Sport Paddy handle).
           cleanSheets: { "Beks": 5, "Paulo": 4, "Erons": 3 },
         },
+        {
+          date: "2026-09-13",
+          label: "Matchday 3",
+          sportpaddy: "https://sportpaddy.com/game/sunday-night-battle-2026-09-13/players",
+          played: [
+            "Khell Magic", "Erons", "Victor", "NFO", "Hanafi", "Bouncey", "Simaye", "Fabulous Joe",
+            "Sharon", "Mamadi", "Valo", "Calebthemagician", "Starman", "Sanz", "Grand", "Pizma",
+            "Ibrahim", "Global K", "Paulo", "Adams", "Beks", "Dr David", "Miracle", "Fahad",
+          ],
+          goals:       { "Khell Magic": 3, "Victor": 1, "Hanafi": 3, "Fabulous Joe": 6, "Valo": 2, "Starman": 2, "Sanz": 1, "Pizma": 1, "Ibrahim": 3, "Global K": 1 },
+          assists:     { "Fabulous Joe": 2, "Valo": 2, "Sanz": 1, "Ibrahim": 4, "Adams": 1 },
+          cleanSheets: {},
+        },
       ],
     },
   },
