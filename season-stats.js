@@ -65,7 +65,7 @@ const SEASON_STATS = {
             "Sharon", "Mamadi", "Valo", "Calebthemagician", "Starman", "Sanz", "Grand", "Pizma",
             "Ibrahim", "Global K", "Paulo", "Adams", "Beks", "Dr David", "Miracle", "Fahad",
           ],
-          goals:       { "Khell Magic": 3, "Victor": 1, "Hanafi": 3, "Fabulous Joe": 6, "Valo": 2, "Starman": 2, "Sanz": 1, "Pizma": 1, "Ibrahim": 3, "Global K": 1 },
+          goals:       { "Khell Magic": 3, "Victor": 1, "Hanafi": 3, "Fabulous Joe": 6, "Valo": 2, "Starman": 2, "Sanz": 1, "Pizma": 1, "Ibrahim": 3, "Global K": 1, "Bouncey": 1 },
           assists:     { "Fabulous Joe": 2, "Valo": 2, "Sanz": 1, "Ibrahim": 4, "Adams": 1 },
           cleanSheets: {},
         },
@@ -73,6 +73,11 @@ const SEASON_STATS = {
     },
   },
 };
+
+// Clean sheets are recorded but parked — the data stays intact underneath,
+// but no page shows it. Flip to true (and un-hide the UI in stats.html,
+// record.html and index.html) to bring the feature back.
+const SHOW_CLEAN_SHEETS = false;
 
 const STAT_KEYS = ["goals", "assists", "cleanSheets"];
 

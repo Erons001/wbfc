@@ -255,7 +255,7 @@ function openModal(i) {
     ["GOALS", t.goals],
     ["ASSISTS", t.assists],
   ];
-  if (t.cleanSheets > 0) seasonTiles.push(["CLEAN SHEETS", t.cleanSheets]);
+  if (SHOW_CLEAN_SHEETS && t.cleanSheets > 0) seasonTiles.push(["CLEAN SHEETS", t.cleanSheets]);
   document.getElementById("m-season").innerHTML = seasonTiles.map(([k, v]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
 

@@ -198,7 +198,8 @@ function matchLog(year) {
   wrap.innerHTML = matches.map(m => {
     const roster = (m.played || []).slice().sort((a, b) => a.localeCompare(b));
     const total = (map) => Object.values(map || {}).reduce((s, n) => s + n, 0);
-    const gTotal = total(m.goals), aTotal = total(m.assists), csTotal = total(m.cleanSheets);
+    const gTotal = total(m.goals), aTotal = total(m.assists);
+    const csTotal = SHOW_CLEAN_SHEETS ? total(m.cleanSheets) : 0;
     const cols = [col("Goals", m.goals), col("Assists", m.assists)];
     if (csTotal) cols.push(col("Clean sheets", m.cleanSheets));
     return `
@@ -230,11 +231,11 @@ function render() {
   document.getElementById("summary").innerHTML =
     `<b>${year}</b> · ${meta.matches} ${meta.matches === 1 ? "matchday" : "matchdays"} played · ` +
     `<b>${meta.players}</b> players · <b>${meta.goals}</b> goals · <b>${meta.assists}</b> assists` +
-    (meta.cleanSheets ? ` · <b>${meta.cleanSheets}</b> clean sheets` : "");
+    (SHOW_CLEAN_SHEETS && meta.cleanSheets ? ` · <b>${meta.cleanSheets}</b> clean sheets` : "");
   fillTable("scorers", "scorers-empty", seasonLeaderboard(year, "goals"), "goals", { showApps: true, collapseAt: 6, moreId: "scorers-more" });
   fillTable("assisters", "assisters-empty", seasonLeaderboard(year, "assists"), "assists", { showApps: true, collapseAt: 6, moreId: "assisters-more" });
   const csRows = seasonLeaderboard(year, "cleanSheets");
-  document.getElementById("cs-card").hidden = csRows.length === 0;
+  document.getElementById("cs-card").hidden = !SHOW_CLEAN_SHEETS || csRows.length === 0;
   fillTable("cleansheets", "cleansheets-empty", csRows, "cleanSheets", { showApps: true, collapseAt: 6, moreId: "cleansheets-more" });
   fillTable("appearances", "appearances-empty", seasonLeaderboard(year, "apps"), "apps", { limit: 10 });
   matchLog(year);
