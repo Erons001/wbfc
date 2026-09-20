@@ -106,4 +106,9 @@ const SQUAD = [
     blurb: "A hard-working left midfielder. 82 defending and 83 physical for a wide player — tracks back and wins his battles.",
     about: "A two-way left-sided midfielder who puts defensive work in as readily as he gets forward. Physically strong for the position, and equally comfortable pushed further up as a winger.",
     chem: "Shadow or Anchor to sharpen the defending, or Engine to add pace going forward." },
+  { name: "Scotts", file: "Scotts.png", ovr: 85, pos: "ST", alt: [], foot: "Right", trend: "up", delta: 1,
+    pac:82, sho:91, pas:87, dri:88, def:74, phy:86,
+    blurb: "A complete number nine. 91 shooting, 88 dribbling and 87 passing — finishes chances and creates them.",
+    about: "A powerful, technically gifted striker who can hold the ball up, link play and score from anywhere in the box. Strong on the ball, hard to knock off it, and a constant threat in front of goal.",
+    chem: "Hunter or Sniper to push the finishing past 95." },
 ];
