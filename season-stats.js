@@ -30,11 +30,11 @@ const SEASON_STATS = {
           sportpaddy: "https://sportpaddy.com/game/sunday-evening-sets-2026-08-30/players",
           // From the Sport Paddy roster (18 attended). Regulars who turned up under
           // nicknames are mapped here: Joga = Bouncey, KM10 = Khell Magic,
-          // Tinubu = Valo, ISMA'EL HOES = Ismael.
+          // Tinubu = Valo, ISMA'EL HOES = Ismael, Kingfhad = Fahad.
           played: [
             "Valo", "Isaac", "Khell Magic",
             "Erinie", "Erons", "Paulo", "Bouncey", "Ismael", "Global K", "Starman", "Beks",
-            "Comet", "Joseph LSE", "Abba Ali Mamadi", "Kingfhad", "Sanusi",
+            "Comet", "Joseph LSE", "Abba Ali Mamadi", "Fahad", "Sanusi",
             "Majeed", "Nur", "Grand",
           ],
           goals:       { "Valo": 5, "Erinie": 3, "Isaac": 2, "Paulo": 1, "Khell Magic": 1, "Ismael": 1 },
@@ -76,7 +76,7 @@ const SEASON_STATS = {
           played: [
             "Ismael", "2K", "Khell Magic", "Erons", "Timzy", "Beks", "Mike", "Mamadi",
             "Paulo", "Sanz", "Global K", "Ibrahim", "Grand", "Sulented", "Scotts", "Hanafi",
-            "Fabulous Joe", "Chukwudi Nnadika", "Dav_inchi", "Bouncey", "Sharon", "Kingfhad",
+            "Fabulous Joe", "Chukwudi Nnadika", "Dav_inchi", "Bouncey", "Sharon", "Fahad",
             "Joseph LSE", "Adams",
           ],
           goals:       { "2K": 1, "Khell Magic": 2, "Beks": 1, "Sanz": 1, "Global K": 1, "Ibrahim": 1, "Sulented": 3, "Scotts": 4, "Fabulous Joe": 3, "Sharon": 2, "Joseph LSE": 1 },
